@@ -114,6 +114,17 @@ At minimum, local testing assumes:
 
 If a tenant can sign in but sees no selectable unit on `/submit`, their Clerk `user.id` likely does not match any `units.tenant_id` row yet.
 
+
+##  System Architecture: FixFlow
+
+<img width="2362" height="2308" alt="image" src="https://github.com/user-attachments/assets/cf79dd08-1038-4756-b6af-546d7c33a1d8" />
+
+more information 
+
+https://github.com/MasteraSnackin/FixFlow/blob/main/ARCHITECTURE.md
+
+
+
 ## Local development
 
 ```bash
