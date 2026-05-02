@@ -11,6 +11,11 @@ FixFlow is an AI-powered property maintenance agent for small landlords and prop
 - Notification pipeline: generate a voice update and quote-request outreach with Twilio, ElevenLabs, and Resend when configured.
 - Landlord flow: review requests in a dashboard, inspect estimates, and approve dispatch.
 
+
+<img width="1792" height="2012" alt="60814" src="https://github.com/user-attachments/assets/0aafa635-15f9-4c3e-ab32-3f6e71bfcafa" />
+<img width="2024" height="2482" alt="37640" src="https://github.com/user-attachments/assets/6fa82e48-9b70-4073-9485-d71f996d36cc" />
+
+
 ## Stack
 
 - Next.js 16
