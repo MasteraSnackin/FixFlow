@@ -1,0 +1,1223 @@
+\documentclass[11pt, a4paper]{article}
+
+% ── Packages ──
+\usepackage[margin=1in]{geometry}
+\usepackage{xcolor}
+\usepackage{titlesec}
+\usepackage{enumitem}
+\usepackage{tabularx}
+\usepackage{booktabs}
+\usepackage{colortbl}
+\usepackage{fancyhdr}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{fontenc}
+\usepackage{tcolorbox}
+\usepackage{multirow}
+\usepackage{array}
+\usepackage{listings}
+\usepackage{lastpage}
+\usepackage{ragged2e}
+
+\tcbuselibrary{skins, breakable}
+
+% ── Colors ──
+\definecolor{primary}{HTML}{1B4F72}
+\definecolor{accent}{HTML}{2E86C1}
+\definecolor{darkgray}{HTML}{2C3E50}
+\definecolor{lightblue}{HTML}{D6EAF8}
+\definecolor{lightteal}{HTML}{D1F2EB}
+\definecolor{lightpurple}{HTML}{E8DAEF}
+\definecolor{lightgray}{HTML}{F2F4F4}
+\definecolor{medblue}{HTML}{2980B9}
+\definecolor{medteal}{HTML}{1ABC9C}
+\definecolor{medpurple}{HTML}{8E44AD}
+\definecolor{critred}{HTML}{E74C3C}
+\definecolor{highamber}{HTML}{F39C12}
+\definecolor{medgreen}{HTML}{27AE60}
+\definecolor{bordergray}{HTML}{BDC3C7}
+\definecolor{textmuted}{HTML}{7F8C8D}
+\definecolor{warningbg}{HTML}{FEF9E7}
+\definecolor{warningborder}{HTML}{F1C40F}
+\definecolor{infobg}{HTML}{EBF5FB}
+\definecolor{infoborder}{HTML}{3498DB}
+\definecolor{successbg}{HTML}{EAFAF1}
+\definecolor{successborder}{HTML}{27AE60}
+\definecolor{codebg}{HTML}{F8F9FA}
+\definecolor{codeframe}{HTML}{DEE2E6}
+
+% ── Hyperref ──
+\hypersetup{
+  colorlinks=true,
+  linkcolor=accent,
+  urlcolor=accent,
+  pdftitle={FixFlow Phase 2: Core Agent Pipeline - Task Breakdown},
+  pdfauthor={Varun Bhandari, Vraj Patel}
+}
+
+% ── Code listings ──
+\lstset{
+  basicstyle=\small\ttfamily,
+  backgroundcolor=\color{codebg},
+  frame=single,
+  rulecolor=\color{codeframe},
+  breaklines=true,
+  breakatwhitespace=true,
+  tabsize=2,
+  showstringspaces=false,
+  xleftmargin=4pt,
+  xrightmargin=4pt,
+  aboveskip=6pt,
+  belowskip=6pt,
+  framesep=4pt,
+}
+
+% ── Section formatting ──
+\titleformat{\section}
+  {\Large\bfseries\color{primary}}
+  {\thesection}{1em}{}
+  [\vspace{-0.5em}\textcolor{accent}{\rule{\textwidth}{1.5pt}}]
+
+\titleformat{\subsection}
+  {\large\bfseries\color{darkgray}}
+  {\thesubsection}{0.8em}{}
+
+\titleformat{\subsubsection}
+  {\normalsize\bfseries\color{accent}}
+  {\thesubsubsection}{0.6em}{}
+
+% ── Header/Footer ──
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small\textcolor{textmuted}{\textit{FixFlow --- Phase 2: Core Agent Pipeline}}}
+\fancyhead[R]{\small\textcolor{textmuted}{\textit{Zero to Agent Hackathon NYC}}}
+\fancyfoot[C]{\small\textcolor{textmuted}{Page \thepage\ of \pageref{LastPage}}}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0.4pt}
+
+% ── Custom tcolorbox styles ──
+\newtcolorbox{milestonebox}{
+  enhanced,
+  colback=infobg, colframe=infoborder,
+  boxrule=0.8pt, arc=3pt,
+  left=8pt, right=8pt, top=5pt, bottom=5pt,
+}
+
+\newtcolorbox{warningbox}{
+  enhanced,
+  colback=warningbg, colframe=warningborder,
+  boxrule=0.8pt, arc=3pt,
+  left=8pt, right=8pt, top=5pt, bottom=5pt,
+}
+
+\newtcolorbox{syncbox}{
+  enhanced,
+  colback=lightteal, colframe=medteal,
+  boxrule=0.8pt, arc=4pt,
+  left=10pt, right=10pt, top=6pt, bottom=6pt,
+}
+
+\newtcolorbox{successbox}{
+  enhanced,
+  colback=successbg, colframe=successborder,
+  boxrule=0.8pt, arc=3pt,
+  left=8pt, right=8pt, top=5pt, bottom=5pt,
+}
+
+\newtcolorbox{codebox}{
+  enhanced,
+  colback=codebg, colframe=codeframe,
+  boxrule=0.5pt, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  fontupper=\small\ttfamily,
+}
+
+% ── Priority badge command ──
+\newcommand{\critical}{\textcolor{critred}{\rule{6pt}{6pt}}~\textcolor{critred}{\scriptsize\textbf{CRITICAL PATH}}}
+\newcommand{\highpri}{\textcolor{highamber}{\rule{6pt}{6pt}}~\textcolor{highamber}{\scriptsize\textbf{HIGH}}}
+\newcommand{\medpri}{\textcolor{medgreen}{\rule{6pt}{6pt}}~\textcolor{medgreen}{\scriptsize\textbf{MEDIUM}}}
+
+% ── Code command ──
+\newcommand{\code}[1]{\texttt{\small\colorbox{lightgray}{#1}}}
+
+% ── Document ──
+\begin{document}
+
+% ════════════════════════════════════════
+% TITLE PAGE
+% ════════════════════════════════════════
+\begin{titlepage}
+\centering
+\vspace*{2cm}
+
+{\Huge\bfseries\textcolor{primary}{Phase 2: Core Agent Pipeline}}\\[0.6cm]
+{\LARGE\textcolor{accent}{Detailed Task Breakdown}}\\[0.3cm]
+\textcolor{accent}{\rule{0.6\textwidth}{1.5pt}}\\[1cm]
+
+{\Large\textcolor{darkgray}{FixFlow --- AI-Powered Property Maintenance Agent}}\\[0.5cm]
+{\large\textcolor{textmuted}{Zero to Agent: Vercel $\times$ DeepMind Hackathon NYC}}\\[2cm]
+
+\begin{tabular}{rl}
+\textcolor{textmuted}{Duration:} & \textbf{11:00 AM -- 1:00 PM EDT (2 hours)} \\[6pt]
+\textcolor{textmuted}{Team:} & \textbf{3 developers working in parallel} \\[6pt]
+\textcolor{textmuted}{Goal:} & \textbf{Every AI capability works independently end-to-end} \\[6pt]
+\textcolor{textmuted}{Prerequisite:} & \textbf{Phase 1 complete (deployed app + DB + proven APIs)} \\[6pt]
+\textcolor{textmuted}{Date:} & \textbf{March 21, 2026} \\[6pt]
+\textcolor{textmuted}{Version:} & \textbf{1.0} \\
+\end{tabular}
+
+\vfill
+
+{\normalsize\textcolor{textmuted}{Prepared by}}\\[4pt]
+{\large\textbf{Varun Bhandari \quad\&\quad Vraj Patel}}\\[2pt]
+{\small\textcolor{textmuted}{Stony Brook University --- M.S. Computer Science}}
+
+\end{titlepage}
+
+% ════════════════════════════════════════
+% PHASE OVERVIEW
+% ════════════════════════════════════════
+\section{Phase Overview}
+
+Phase 2 is the \textbf{make-or-break phase}. This is where FixFlow goes from scaffolding to a working product. Each person builds one vertical slice of the product that works independently. By 1:00 PM, every AI capability must function on its own, ready to be chained together in Phase 3.
+
+\subsection{What Each Person Builds}
+
+\begin{tabularx}{\textwidth}{|>{\columncolor{lightblue}}l|X|l|}
+\hline
+\rowcolor{primary}
+\textcolor{white}{\textbf{Person}} & \textcolor{white}{\textbf{Builds in Phase 2}} & \textcolor{white}{\textbf{Time}} \\
+\hline
+Person 1 --- Frontend & Tenant submission UI: camera capture, image preview, upload to Supabase Storage, text input, submission API call, diagnosis result display & 2 hrs \\
+\hline
+Person 2 --- Backend + AI & Gemini Vision diagnosis API route + Gemini Maps grounding contractor discovery API route (the two most critical AI integrations) & 2 hrs \\
+\hline
+Person 3 --- APIs + Dashboard & Gemini Search grounding contractor vetting API route + ElevenLabs voice generation API route + work order generation & 2 hrs \\
+\hline
+\end{tabularx}
+
+\subsection{Phase 2 Architecture}
+
+The three people build components that connect at well-defined API boundaries:
+
+\begin{center}
+\begin{tabularx}{0.9\textwidth}{ccc}
+\textbf{Person 1 (Frontend)} & $\longrightarrow$ & \textbf{Person 2 (AI Routes)} \\
+Submission form & calls & \code{POST /api/diagnose} \\
+Results display & calls & \code{POST /api/contractors} \\[6pt]
+\textbf{Person 1 (Frontend)} & $\longrightarrow$ & \textbf{Person 3 (AI Routes)} \\
+Vetting display & calls & \code{POST /api/vet} \\
+Audio player & calls & \code{POST /api/notify} \\
+\end{tabularx}
+\end{center}
+
+\begin{warningbox}
+\textbf{API Contract Rule:} Person 2 and Person 3 must define their API request/response shapes in the first 15 minutes and commit them as TypeScript types. Person 1 codes the frontend against these types immediately, even before the API routes are functional (use mock data initially, swap to real calls as routes come online).
+\end{warningbox}
+
+\subsection{Mid-Phase Sync Point}
+
+\begin{syncbox}
+\textbf{12:00 PM Quick Check (2 minutes, no stopping):} Each person calls out their status aloud:
+\begin{itemize}[itemsep=1pt, leftmargin=1.5em]
+  \item Person 1: ``Submission form works / doesn't work yet''
+  \item Person 2: ``Diagnosis route works / Maps route works / blocked on X''
+  \item Person 3: ``Vetting route works / ElevenLabs works / blocked on X''
+\end{itemize}
+If anyone is blocked, the other two help unblock for 5 minutes max, then everyone returns to their lane.
+\end{syncbox}
+
+\subsection{Priority Legend}
+
+\begin{tabularx}{\textwidth}{lX}
+\critical & Must complete for the demo to function at all. Non-negotiable. \\[4pt]
+\highpri & Needed for a complete demo but has a fallback. \\[4pt]
+\medpri & Adds quality but can be cut if behind schedule. \\
+\end{tabularx}
+
+\newpage
+
+% ════════════════════════════════════════
+% PERSON 1 --- FRONTEND
+% ════════════════════════════════════════
+\section{Person 1 --- Frontend Lead}
+\begin{center}
+\textcolor{medblue}{\large\textbf{Tenant Submission UI + Image Upload + Results Display}}\\[2pt]
+\textcolor{textmuted}{\small Total estimated time: 115--120 minutes}
+\end{center}
+
+\vspace{0.5em}
+
+% Task 1.1
+\subsection{Task 2.1.1: Build Photo Capture Component}
+
+\begin{tabularx}{\textwidth}{lX}
+\textbf{Priority:} & \critical \\
+\textbf{Time:} & 25 minutes (11:00 -- 11:25) \\
+\textbf{Depends on:} & Phase 1 complete (app deployed, Supabase client ready) \\
+\textbf{Blocks:} & Everything --- no photo means no pipeline \\
+\end{tabularx}
+
+\vspace{0.3em}
+
+\textbf{File:} \code{src/components/PhotoCapture.tsx} (client component)
+
+\textbf{Steps:}
+\begin{enumerate}[leftmargin=2em, itemsep=2pt]
+  \item Create a client component with \code{"use client"} directive.
+  \item Implement dual input mode:
+    \begin{itemize}[itemsep=1pt]
+      \item \textbf{Camera capture:} Use \code{<input type="file" accept="image/*" capture="environment">} which opens the rear camera on mobile devices.
+      \item \textbf{File upload:} Standard file picker for desktop users. Accept \code{.jpg, .png, .webp} only.
+    \end{itemize}
+  \item Add client-side validation:
+    \begin{itemize}[itemsep=1pt]
+      \item File size $\leq$ 10MB (show error toast if exceeded)
+      \item File type must be JPEG, PNG, or WebP
+      \item Image must have minimum resolution of 200$\times$200px (read via \code{Image()} object)
+    \end{itemize}
+  \item Implement image preview:
+    \begin{itemize}[itemsep=1pt]
+      \item Show captured/selected photo as a large preview card
+      \item Add a ``Retake'' button to clear and recapture
+      \item Use \code{URL.createObjectURL()} for instant preview (no upload yet)
+    \end{itemize}
+  \item Compress images client-side if $>$ 5MB using Canvas API:
+    \begin{itemize}[itemsep=1pt]
+      \item Draw to canvas at reduced quality (0.8 JPEG quality)
+      \item Convert back to Blob
+      \item This reduces Gemini processing time and Supabase storage usage
+    \end{itemize}
+\end{enumerate}
+
+\textbf{UI Design:}
+\begin{itemize}[leftmargin=2em, itemsep=1pt]
+  \item Large tap target area (at least 200$\times$200px) with camera icon and ``Tap to photograph issue'' text
+  \item Dashed border in the empty state
+  \item Smooth transition to image preview on capture
+  \item Mobile-first layout: full-width card on screens $<$ 640px
+\end{itemize}
+
+\textbf{Acceptance Criteria:} On mobile, tapping the button opens the camera. On desktop, it opens a file picker. Selected photo appears as a preview. Validation rejects files over 10MB with a clear error message.
+
+\vspace{1em}
+
+% Task 1.2
+\subsection{Task 2.1.2: Build Submission Form \& Upload Flow}
+
+\begin{tabularx}{\textwidth}{lX}
+\textbf{Priority:} & \critical \\
+\textbf{Time:} & 25 minutes (11:25 -- 11:50) \\
+\textbf{Depends on:} & Task 2.1.1, Person 2's Supabase Storage bucket \\
+\textbf{Blocks:} & The entire agent pipeline cannot trigger without this \\
+\end{tabularx}
+
+\vspace{0.3em}
+
+\textbf{File:} \code{src/app/(tenant)/submit/page.tsx}
+
+\textbf{Steps:}
+\begin{enumerate}[leftmargin=2em, itemsep=2pt]
+  \item Build the submission page layout:
+    \begin{itemize}[itemsep=1pt]
+      \item \code{PhotoCapture} component (from Task 2.1.1) at the top
+      \item Optional text description textarea (max 500 chars, with character counter)
+      \item Unit selector: auto-populated from the tenant's linked unit in Supabase (query \code{units} table where \code{tenant\_id = currentUser.id})
+      \item Large ``Submit Request'' button (disabled until photo is selected)
+    \end{itemize}
+  \item Implement the upload flow on submit:
+    \begin{enumerate}[itemsep=1pt]
+      \item Show loading spinner with ``Uploading photo...'' state
+      \item Upload image to Supabase Storage bucket \code{maintenance-photos} using:
+      \begin{codebox}
+const \{ data, error \} = await supabase.storage\\
+\quad .from('maintenance-photos')\\
+\quad .upload(`\$\{unitId\}/\$\{Date.now()\}.jpg`, file);
+      \end{codebox}
+      \item Get the public URL from the upload response
+      \item Create a \code{maintenance\_requests} record in Supabase:
+      \begin{codebox}
+await supabase.from('maintenance\_requests').insert(\{\\
+\quad unit\_id: selectedUnit,\\
+\quad tenant\_id: user.id,\\
+\quad photo\_url: uploadedUrl,\\
+\quad description: textInput,\\
+\quad status: 'submitted'\\
+\});
+      \end{codebox}
+      \item On success: redirect to the request detail page \code{/requests/[id]}
+    \end{enumerate}
+  \item Add error handling:
+    \begin{itemize}[itemsep=1pt]
+      \item Upload failure $\rightarrow$ show retry button, do not create DB record
+      \item DB insert failure $\rightarrow$ clean up the uploaded photo, show error
+      \item Network timeout $\rightarrow$ show ``Check your connection'' message
+    \end{itemize}
+\end{enumerate}
+
+\textbf{Acceptance Criteria:} A tenant can select a photo, optionally type a description, and submit. The photo appears in Supabase Storage and a new row appears in \code{maintenance\_requests} with status \code{submitted}.
+
+\vspace{1em}
+
+% Task 1.3
+\subsection{Task 2.1.3: Build Diagnosis Result Card}
+
+\begin{tabularx}{\textwidth}{lX}
+\textbf{Priority:} & \critical \\
+\textbf{Time:} & 25 minutes (11:50 -- 12:15) \\
+\textbf{Depends on:} & Person 2's diagnosis API route (can use mock data initially) \\
+\textbf{Blocks:} & Demo quality (this is what judges see first) \\
+\end{tabularx}
+
+\vspace{0.3em}
+
+\textbf{File:} \code{src/components/DiagnosisCard.tsx}
+
+\textbf{Steps:}
+\begin{enumerate}[leftmargin=2em, itemsep=2pt]
+  \item Create the request detail page at \code{src/app/(tenant)/requests/[id]/page.tsx}:
+    \begin{itemize}[itemsep=1pt]
+      \item Fetch the \code{maintenance\_requests} record by ID from Supabase
+      \item Show the submitted photo as a thumbnail
+      \item Below the photo, show the \code{DiagnosisCard} component (populated from the \code{diagnosis} JSONB column)
+    \end{itemize}
+  \item Build the \code{DiagnosisCard} component:
+    \begin{itemize}[itemsep=1pt]
+      \item \textbf{Category badge:} Color-coded pill (plumbing = blue, electrical = amber, HVAC = teal, structural = red, etc.)
+      \item \textbf{Severity indicator:} 5-dot scale with filled dots up to the severity level. Color shifts from green (1) to red (5).
+      \item \textbf{Urgency banner:} If \code{urgency === "emergency"}, show a red banner at the top: ``EMERGENCY --- Immediate Action Required''
+      \item \textbf{Description:} The AI's plain-English diagnosis (2--4 sentences)
+      \item \textbf{Affected system:} Shown as a subtitle (e.g., ``Kitchen sink drain pipe'')
+      \item \textbf{Recommended action:} Shown in a distinct card section (e.g., ``Replace wax ring seal at toilet base'')
+      \item \textbf{Safety note:} If severity $\geq$ 4 and \code{tenant\_safety\_note} is non-null, show it in a red warning box (e.g., ``Turn off water supply valve under the sink immediately'')
+      \item \textbf{Confidence meter:} Small progress bar showing model confidence (hide if $>$ 0.8, show with warning if $<$ 0.6)
+    \end{itemize}
+  \item Implement a loading/streaming state:
+    \begin{itemize}[itemsep=1pt]
+      \item While the diagnosis is pending (\code{diagnosis} is null), show a skeleton loader with pulsing animation
+      \item Use Supabase Realtime to subscribe to changes on this specific request ID
+      \item When the \code{diagnosis} column updates, the card renders automatically without page refresh
+    \end{itemize}
+  \item Start with mock data while Person 2 finishes the API route:
+    \begin{itemize}[itemsep=1pt]
+      \item Create a \code{src/lib/mocks/diagnosis.ts} file with sample diagnosis JSON matching the Zod schema
+      \item Use a feature flag: \code{const USE\_MOCK = process.env.NEXT\_PUBLIC\_USE\_MOCK === "true"}
+      \item Switch to real data once Person 2's route is live
+    \end{itemize}
+\end{enumerate}
+
+\textbf{Acceptance Criteria:} Card renders correctly with all fields from the diagnosis schema. Emergency requests show the red banner. Safety notes appear for high-severity issues. Realtime subscription updates the card when the DB changes.
+
+\vspace{1em}
+
+% Task 1.4
+\subsection{Task 2.1.4: Build Contractor Results UI with Map}
+
+\begin{tabularx}{\textwidth}{lX}
+\textbf{Priority:} & \critical \\
+\textbf{Time:} & 30 minutes (12:15 -- 12:45) \\
+\textbf{Depends on:} & Person 2's contractor API route (can use mock data) \\
+\textbf{Blocks:} & Demo impact (the map is the visual centerpiece) \\
+\end{tabularx}
+
+\vspace{0.3em}
+
+\textbf{Files:} \code{src/components/ContractorMap.tsx}, \code{src/components/ContractorCard.tsx}
+
+\textbf{Steps:}
+\begin{enumerate}[leftmargin=2em, itemsep=2pt]
+  \item Add a contractor results section below the \code{DiagnosisCard} on the request detail page.
+  \item Build the \code{ContractorMap} component:
+    \begin{itemize}[itemsep=1pt]
+      \item Embed a Google Maps view using an \code{<iframe>} with the Google Maps Embed API (free, no API key needed for basic embeds) centered on the property address
+      \item Alternatively, use a static map image from Google Static Maps API as a simpler fallback
+      \item Mark the property location with a pin
+      \item If Maps grounding returns \code{maps\_url} for each contractor, link each contractor card to their Google Maps listing
+    \end{itemize}
+  \item Build the \code{ContractorCard} component (rendered for each contractor):
+    \begin{itemize}[itemsep=1pt]
+      \item Contractor name (bold, linked to \code{maps\_url})
+      \item Star rating: render as filled/empty stars (e.g., $\star\star\star\star\smallstar$ for 4.2)
+      \item Review count: e.g., ``(142 reviews)''
+      \item Distance from property: e.g., ``2.3 miles away''
+      \item Business hours today: e.g., ``Open today: 8 AM -- 6 PM''
+      \item Open/closed badge: green ``Open Now'' or red ``Closed'' pill
+      \item Phone number: clickable \code{tel:} link (critical for mobile)
+      \item ``Select this contractor'' button (stores selection to \code{assigned\_contractor} column)
+    \end{itemize}
+  \item Layout: map on top (or left on desktop), scrollable contractor card list below (or right on desktop). Prioritize contractors that are currently open.
+  \item Realtime subscription: same pattern as diagnosis --- listen for the \code{contractors} column to update.
+\end{enumerate}
+
+\textbf{Acceptance Criteria:} Map renders centered on the property. 5+ contractor cards display with ratings, hours, distance, and clickable phone links. ``Select'' button stores the choice to the DB.
+
+\vspace{1em}
+
+% Task 1.5
+\subsection{Task 2.1.5: Build Voice Update Audio Player}
+
+\begin{tabularx}{\textwidth}{lX}
+\textbf{Priority:} & \highpri \\
+\textbf{Time:} & 15 minutes (12:45 -- 1:00) \\
+\textbf{Depends on:} & Person 3's ElevenLabs integration \\
+\textbf{Blocks:} & Demo ``wow moment'' (judges hear the voice) \\
+\end{tabularx}
+
+\vspace{0.3em}
+
+\textbf{File:} \code{src/components/VoiceUpdate.tsx}
+
+\textbf{Steps:}
+\begin{enumerate}[leftmargin=2em, itemsep=2pt]
+  \item Add a ``Status Update'' section at the bottom of the request detail page.
+  \item Build the audio player:
+    \begin{itemize}[itemsep=1pt]
+      \item Custom play/pause button (large, accessible tap target)
+      \item Progress bar showing playback position
+      \item Use the native HTML5 \code{<audio>} element with the \code{voice\_update\_url} from the DB
+      \item Show the text transcript alongside the audio player (the same text that was sent to ElevenLabs)
+    \end{itemize}
+  \item Show a loading state: ``Generating voice update...'' with a subtle waveform animation while \code{voice\_update\_url} is null.
+  \item Realtime subscription: when the URL appears in the DB, auto-load the audio player.
+  \item Add a download link for the MP3 file.
+\end{enumerate}
+
+\textbf{Acceptance Criteria:} Audio player renders and plays the voice update when available. Playback works on both mobile and desktop browsers.
+
+\vspace{0.5em}
+
+\begin{milestonebox}
+\textbf{Person 1 Exit Criteria by 1:00 PM}\\[4pt]
+A tenant can: (1) photograph a maintenance issue on mobile, (2) submit it with optional description, (3) see the AI diagnosis card render in real-time as the backend processes it, (4) see a map with contractor cards populate once the search completes, and (5) play a voice status update. The UI works with both real API data and mock fallbacks.
+\end{milestonebox}
+
+\newpage
+
+% ════════════════════════════════════════
+% PERSON 2 --- BACKEND + AI
+% ════════════════════════════════════════
+\section{Person 2 --- Backend \& AI Lead}
+\begin{center}
+\textcolor{medteal}{\large\textbf{Gemini Vision Diagnosis + Maps Grounding Contractor Search}}\\[2pt]
+\textcolor{textmuted}{\small Total estimated time: 115--120 minutes}
+\end{center}
+
+\vspace{0.5em}
+
+Person 2 builds the two most critical AI integrations --- the ones that make or break the entire demo. Both routes must work reliably by 1:00 PM.
+
+\vspace{0.5em}
+
+% Task 2.1
+\subsection{Task 2.2.1: Define API Contracts \& Share with Team}
+
+\begin{tabularx}{\textwidth}{lX}
+\textbf{Priority:} & \critical \\
+\textbf{Time:} & 15 minutes (11:00 -- 11:15) \\
+\textbf{Depends on:} & Phase 1 Zod schemas \\
+\textbf{Blocks:} & Person 1 cannot build UI without knowing the response shapes \\
+\end{tabularx}
+
+\vspace{0.3em}
+
+\textbf{File:} \code{src/lib/api-types.ts}
+
+\textbf{Steps:}
+\begin{enumerate}[leftmargin=2em, itemsep=2pt]
+  \item Define the request/response TypeScript types for all four API routes that will be built in Phase 2:
+
+  \item \textbf{POST \code{/api/diagnose}} --- Person 2 builds this:
+    \begin{itemize}[itemsep=1pt]
+      \item Request: \code{\{ requestId: string \}} (the maintenance\_request ID)
+      \item Response: the \code{DiagnosisSchema} object (category, severity, urgency, description, affected\_system, recommended\_action, tenant\_safety\_note, confidence)
+    \end{itemize}
+
+  \item \textbf{POST \code{/api/contractors}} --- Person 2 builds this:
+    \begin{itemize}[itemsep=1pt]
+      \item Request: \code{\{ requestId: string, category: string, address: string \}}
+      \item Response: \code{\{ contractors: ContractorSchema[] \}} (array of 5--10 contractors)
+    \end{itemize}
+
+  \item \textbf{POST \code{/api/vet}} --- Person 3 builds this:
+    \begin{itemize}[itemsep=1pt]
+      \item Request: \code{\{ requestId: string, contractors: ContractorSchema[], repairType: string, city: string \}}
+      \item Response: \code{\{ vetting: VettingSchema[] \}} (vetting results for top 3 contractors)
+    \end{itemize}
+
+  \item \textbf{POST \code{/api/notify}} --- Person 3 builds this:
+    \begin{itemize}[itemsep=1pt]
+      \item Request: \code{\{ requestId: string \}} (reads all data from DB to compose the message)
+      \item Response: \code{\{ audioUrl: string, transcript: string \}}
+    \end{itemize}
+
+  \item Commit and push \code{api-types.ts} immediately. Notify Person 1 and Person 3.
+\end{enumerate}
+
+\textbf{Acceptance Criteria:} All four API contracts are committed to the repo. Person 1 confirms they can import the types.
+
+\vspace{1em}
+
+% Task 2.2
+\subsection{Task 2.2.2: Build Diagnosis API Route}
+
+\begin{tabularx}{\textwidth}{lX}
+\textbf{Priority:} & \critical \\
+\textbf{Time:} & 35 minutes (11:15 -- 11:50) \\
+\textbf{Depends on:} & Phase 1 Gemini Vision test (Task 3.2) \\
+\textbf{Blocks:} & The entire pipeline starts here --- nothing works without diagnosis \\
+\end{tabularx}
+
+\vspace{0.3em}
+
+\textbf{File:} \code{src/app/api/diagnose/route.ts}
+
+\textbf{Steps:}
+\begin{enumerate}[leftmargin=2em, itemsep=2pt]
+  \item Create the API route handler:
+    \begin{enumerate}[itemsep=1pt]
+      \item Parse the \code{requestId} from the request body.
+      \item Fetch the \code{maintenance\_requests} record from Supabase using the service-role client (to bypass RLS).
+      \item Get the photo URL from the record.
+      \item Download the photo from Supabase Storage (fetch the signed URL, then fetch the image bytes).
+    \end{enumerate}
+
+  \item Call Gemini 3.1 Pro with the Vercel AI SDK:
+\begin{lstlisting}[language=JavaScript]
+import { google } from '@ai-sdk/google';
+import { generateObject } from 'ai';
+import { DiagnosisSchema } from '@/lib/schemas';
+
+const result = await generateObject({
+  model: google('gemini-3.1-pro'),
+  schema: DiagnosisSchema,
+  messages: [
+    {
+      role: 'system',
+      content: 'You are a property maintenance diagnostic
+        agent. Analyze the photo to diagnose the issue.
+        Be specific about severity and recommended action.
+        Set confidence below 0.6 if uncertain.'
+    },
+    {
+      role: 'user',
+      content: [
+        { type: 'image', image: photoBuffer },
+        { type: 'text', text: description || 
+          'Diagnose this maintenance issue.' }
+      ]
+    }
+  ]
+});
+\end{lstlisting}
+
+  \item Write the diagnosis result back to Supabase:
+    \begin{itemize}[itemsep=1pt]
+      \item Update the \code{diagnosis} JSONB column with the structured result
+      \item Update \code{status} from \code{'submitted'} to \code{'diagnosed'}
+      \item Update \code{updated\_at} to \code{now()}
+    \end{itemize}
+
+  \item Add error handling:
+    \begin{itemize}[itemsep=1pt]
+      \item If Gemini returns an error $\rightarrow$ set status to \code{'error'}, log to Sentry
+      \item If confidence $<$ 0.6 $\rightarrow$ still save the diagnosis but flag the request for manual review (add \code{needs\_review: true} to the diagnosis JSON)
+      \item Timeout protection: set a 15-second timeout on the Gemini call
+    \end{itemize}
+
+  \item Return the diagnosis object in the API response.
+\end{enumerate}
+
+\textbf{Testing:}
+\begin{enumerate}[leftmargin=2em, itemsep=2pt]
+  \item Manually create a test request in Supabase with a photo URL.
+  \item Call the API route with curl or the browser console.
+  \item Verify the \code{diagnosis} column updates correctly in Supabase.
+  \item Test with 3 different photos and verify category accuracy.
+\end{enumerate}
+
+\textbf{Acceptance Criteria:} Given a request ID with a photo, the route fetches the photo, sends it to Gemini, receives a structured diagnosis, and writes it to the database. The tenant's real-time UI updates within 1 second of the DB write.
+
+\vspace{1em}
+
+% Task 2.3
+\subsection{Task 2.2.3: Build Contractor Discovery API Route}
+
+\begin{tabularx}{\textwidth}{lX}
+\textbf{Priority:} & \critical \\
+\textbf{Time:} & 40 minutes (11:50 -- 12:30) \\
+\textbf{Depends on:} & Phase 1 Maps grounding test (Task 3.3) \\
+\textbf{Blocks:} & Contractor display, vetting, work orders --- everything downstream \\
+\end{tabularx}
+
+\vspace{0.3em}
+
+\textbf{File:} \code{src/app/api/contractors/route.ts}
+
+\textbf{Steps:}
+\begin{enumerate}[leftmargin=2em, itemsep=2pt]
+  \item Create the API route handler:
+    \begin{enumerate}[itemsep=1pt]
+      \item Parse \code{requestId}, \code{category}, and \code{address} from the request body.
+      \item Validate that the category is one of the allowed values (plumbing, electrical, hvac, structural, appliance, pest, cosmetic).
+    \end{enumerate}
+
+  \item Call Gemini 3.1 Pro with Maps grounding:
+\begin{lstlisting}[language=JavaScript]
+const result = await generateObject({
+  model: google('gemini-3.1-pro', {
+    useSearchGrounding: false,
+  }),
+  tools: { google_maps: google.tools.googleMaps() },
+  schema: z.object({
+    contractors: z.array(ContractorSchema)
+  }),
+  prompt: `Find licensed ${category} contractors 
+    within 10 miles of ${address}. 
+    Return their name, full address, phone number,
+    Google Maps rating, total reviews, distance 
+    in miles, today's hours, and whether they are 
+    currently open. Prioritize those currently open.
+    Return at least 5 results.`
+});
+\end{lstlisting}
+
+  \item Post-process the results:
+    \begin{itemize}[itemsep=1pt]
+      \item Filter out contractors with ratings below 3.5
+      \item Sort by: currently open (first), then by rating (descending)
+      \item For emergency requests (check the diagnosis urgency): expand search radius to 25 miles if fewer than 3 results
+      \item Deduplicate by business name (Maps sometimes returns the same business twice)
+    \end{itemize}
+
+  \item Write contractor results to Supabase:
+    \begin{itemize}[itemsep=1pt]
+      \item Update the \code{contractors} JSONB column with the sorted array
+      \item Keep status as \code{'diagnosed'} (status will change to \code{'dispatched'} after vetting)
+    \end{itemize}
+
+  \item Return the contractor array in the API response.
+\end{enumerate}
+
+\begin{warningbox}
+\textbf{Maps Grounding Fallback Plan:} If Maps grounding is unreliable or returns hallucinated data (discovered in Phase 1 testing), implement a fallback using Gemini with \textbf{Search grounding} instead: ``Search Google for top-rated [category] contractors near [address] with phone numbers and ratings.'' This is less structured but still returns useful results. Build the fallback in the last 10 minutes of this task if time allows.
+\end{warningbox}
+
+\textbf{Acceptance Criteria:} Given a category and address, returns 5+ real contractors with valid names, phones, ratings, and hours. Results are sorted by open-now status and rating. Works for plumbing, electrical, and HVAC categories.
+
+\vspace{1em}
+
+% Task 2.4
+\subsection{Task 2.2.4: Build Request Submission Trigger}
+
+\begin{tabularx}{\textwidth}{lX}
+\textbf{Priority:} & \highpri \\
+\textbf{Time:} & 20 minutes (12:30 -- 12:50) \\
+\textbf{Depends on:} & Tasks 2.2.2 and 2.2.3 \\
+\textbf{Blocks:} & Phase 3 (the pipeline must auto-trigger) \\
+\end{tabularx}
+
+\vspace{0.3em}
+
+\textbf{File:} \code{src/app/api/requests/route.ts}
+
+\textbf{Steps:}
+\begin{enumerate}[leftmargin=2em, itemsep=2pt]
+  \item Create the \code{POST /api/requests} route that Person 1's form calls:
+    \begin{enumerate}[itemsep=1pt]
+      \item Accept multipart form data (photo file + description + unit\_id)
+      \item Upload the photo to Supabase Storage
+      \item Create the \code{maintenance\_requests} record
+      \item \textbf{Immediately trigger} the diagnosis by calling \code{/api/diagnose} internally (using a server-side fetch or direct function call)
+      \item Return the new request ID to the frontend
+    \end{enumerate}
+
+  \item For now, chain diagnosis $\rightarrow$ contractors sequentially in this route:
+    \begin{enumerate}[itemsep=1pt]
+      \item After diagnosis completes, extract the category and get the property address from the \code{units} $\rightarrow$ \code{properties} join
+      \item Call \code{/api/contractors} with the category and address
+      \item After contractors complete, call Person 3's \code{/api/vet} route
+      \item After vetting completes, call Person 3's \code{/api/notify} route
+    \end{enumerate}
+
+  \item This sequential chain is the \textbf{temporary orchestrator} --- it will be replaced by the WDK durable workflow in Phase 3, but having it work now means the full pipeline is demo-able even if WDK integration fails.
+\end{enumerate}
+
+\begin{warningbox}
+\textbf{Why build this before WDK?} The WDK durable workflow is the ``right'' architecture, but it adds complexity. Building a simple sequential chain now ensures the full pipeline works end-to-end by 1:00 PM. Phase 3 upgrades this to WDK for durability. If Phase 3 runs out of time, this fallback still demos perfectly.
+\end{warningbox}
+
+\textbf{Acceptance Criteria:} Submitting a photo via the frontend triggers the full chain: upload $\rightarrow$ diagnose $\rightarrow$ find contractors. The tenant sees results appear in real-time on their request page.
+
+\vspace{1em}
+
+% Task 2.5
+\subsection{Task 2.2.5: End-to-End Testing of Diagnosis + Contractors}
+
+\begin{tabularx}{\textwidth}{lX}
+\textbf{Priority:} & \highpri \\
+\textbf{Time:} & 10 minutes (12:50 -- 1:00) \\
+\textbf{Depends on:} & All previous Person 2 tasks \\
+\end{tabularx}
+
+\vspace{0.3em}
+
+\textbf{Steps:}
+\begin{enumerate}[leftmargin=2em, itemsep=2pt]
+  \item Sign in as the test tenant on the deployed Vercel URL (not localhost).
+  \item Submit a photo of a water-stained ceiling with description ``Water dripping from ceiling.''
+  \item Verify:
+    \begin{itemize}[itemsep=1pt]
+      \item Photo uploads successfully to Supabase Storage
+      \item Diagnosis appears on the request page within 5--8 seconds
+      \item Category is ``plumbing'', severity is 3--4, urgency is appropriate
+      \item Contractor list appears within 15 seconds of diagnosis
+      \item At least 5 contractors are shown with valid data
+    \end{itemize}
+  \item Test a second photo (electrical issue) to verify category switching works.
+  \item Note and share any response time issues or data quality problems with the team.
+\end{enumerate}
+
+\textbf{Acceptance Criteria:} Two different issue types (plumbing, electrical) flow through the full pipeline on the live deployment. Response times are within targets.
+
+\vspace{0.5em}
+
+\begin{milestonebox}
+\textbf{Person 2 Exit Criteria by 1:00 PM}\\[4pt]
+Two working API routes: \code{/api/diagnose} (photo $\rightarrow$ structured diagnosis via Gemini Vision) and \code{/api/contractors} (category + address $\rightarrow$ ranked contractor list via Maps grounding). A sequential orchestrator in \code{/api/requests} chains them together. The pipeline is tested end-to-end on the live deployment with 2+ issue types.
+\end{milestonebox}
+
+\newpage
+
+% ════════════════════════════════════════
+% PERSON 3 --- APIs + INTEGRATIONS
+% ════════════════════════════════════════
+\section{Person 3 --- API \& Integrations Lead}
+\begin{center}
+\textcolor{medpurple}{\large\textbf{Search Grounding Vetting + ElevenLabs Voice + Work Order}}\\[2pt]
+\textcolor{textmuted}{\small Total estimated time: 115--120 minutes}
+\end{center}
+
+\vspace{0.5em}
+
+Person 3 builds the downstream pipeline stages: contractor vetting, work order generation, and voice notification. These add depth and polish to the core diagnosis $\rightarrow$ contractor flow built by Person 2.
+
+\vspace{0.5em}
+
+% Task 3.1
+\subsection{Task 2.3.1: Build Contractor Vetting API Route}
+
+\begin{tabularx}{\textwidth}{lX}
+\textbf{Priority:} & \highpri \\
+\textbf{Time:} & 35 minutes (11:00 -- 11:35) \\
+\textbf{Depends on:} & Phase 1 Gemini Search grounding test, API contract from Person 2 \\
+\textbf{Blocks:} & Work order quality (cost estimates come from vetting) \\
+\end{tabularx}
+
+\vspace{0.3em}
+
+\textbf{File:} \code{src/app/api/vet/route.ts}
+
+\textbf{Steps:}
+\begin{enumerate}[leftmargin=2em, itemsep=2pt]
+  \item Create the API route handler:
+    \begin{enumerate}[itemsep=1pt]
+      \item Parse the \code{requestId}, \code{contractors} array, \code{repairType}, and \code{city} from the request body.
+      \item Select the top 3 contractors from the array (by rating) for detailed vetting.
+    \end{enumerate}
+
+  \item For each of the top 3 contractors, call Gemini with Search grounding:
+\begin{lstlisting}[language=JavaScript]
+const result = await generateObject({
+  model: google('gemini-3.1-pro'),
+  tools: { 
+    google_search: google.tools.googleSearch() 
+  },
+  schema: VettingSchema,
+  prompt: `Search for reviews, complaints, and 
+    licensing information for "${contractor.name}" 
+    in ${city}. Also find the typical cost range 
+    for "${repairType}" in ${city}. 
+    Report findings with source URLs.
+    Flag any red flags (complaints, lawsuits, 
+    licensing issues).`
+});
+\end{lstlisting}
+
+  \item Make the 3 vetting calls in parallel using \code{Promise.all()} for speed:
+\begin{lstlisting}[language=JavaScript]
+const vettingResults = await Promise.all(
+  top3.map(contractor => vetContractor(contractor))
+);
+\end{lstlisting}
+
+  \item Post-process results:
+    \begin{itemize}[itemsep=1pt]
+      \item Sort vetted contractors: those with zero red flags first
+      \item Extract the cost range (\code{estimated\_cost\_low}, \code{estimated\_cost\_high}) from the top-ranked contractor and write it to the maintenance request record
+      \item Ensure all source URLs are valid (basic URL format check)
+    \end{itemize}
+
+  \item Write vetting results to Supabase:
+    \begin{itemize}[itemsep=1pt]
+      \item Update the \code{vetting} JSONB column with the vetting results array
+      \item Update \code{estimated\_cost\_low} and \code{estimated\_cost\_high} columns
+    \end{itemize}
+
+  \item Return the vetting results in the API response.
+\end{enumerate}
+
+\textbf{Acceptance Criteria:} Given 3 contractor names and a repair type, the route returns review summaries, red flags (if any), cost estimates, and source URLs for each. Total response time for all 3 contractors (in parallel) is under 12 seconds.
+
+\vspace{1em}
+
+% Task 3.2
+\subsection{Task 2.3.2: Build Work Order Generation API Route}
+
+\begin{tabularx}{\textwidth}{lX}
+\textbf{Priority:} & \highpri \\
+\textbf{Time:} & 25 minutes (11:35 -- 12:00) \\
+\textbf{Depends on:} & Diagnosis and contractor schemas \\
+\textbf{Blocks:} & Landlord dashboard approval flow \\
+\end{tabularx}
+
+\vspace{0.3em}
+
+\textbf{File:} \code{src/app/api/work-order/route.ts}
+
+\textbf{Steps:}
+\begin{enumerate}[leftmargin=2em, itemsep=2pt]
+  \item Create the route handler:
+    \begin{enumerate}[itemsep=1pt]
+      \item Fetch the full maintenance request record (with diagnosis, contractors, vetting)
+      \item Fetch the unit and property details via join
+    \end{enumerate}
+
+  \item Generate the work order using Gemini structured output:
+\begin{lstlisting}[language=JavaScript]
+const workOrder = await generateObject({
+  model: google('gemini-3.1-pro'),
+  schema: WorkOrderSchema,
+  prompt: `Generate a professional work order:
+    Property: ${property.address}, ${unit.unit_label}
+    Tenant: ${unit.tenant_name}, ${unit.tenant_phone}
+    Issue: ${diagnosis.description}
+    Category: ${diagnosis.category}
+    Severity: ${diagnosis.severity}/5
+    Recommended action: ${diagnosis.recommended_action}
+    Recommended contractor: ${topContractor.name}
+    Phone: ${topContractor.phone}
+    Estimated cost: $${costLow}-$${costHigh}
+    Include alternative contractors.`
+});
+\end{lstlisting}
+
+  \item Implement auto-approval logic:
+    \begin{itemize}[itemsep=1pt]
+      \item If \code{estimated\_cost\_high $\leq$ 500} $\rightarrow$ set \code{landlord\_approved = true} automatically
+      \item If cost $>$ \$500 $\rightarrow$ keep \code{landlord\_approved = false}, status stays at \code{'diagnosed'}
+      \item If \code{urgency === "emergency"} $\rightarrow$ auto-approve regardless of cost
+    \end{itemize}
+
+  \item Write the work order to Supabase:
+    \begin{itemize}[itemsep=1pt]
+      \item Update the \code{work\_order} JSONB column
+      \item Update \code{assigned\_contractor} with the top-ranked vetted contractor
+      \item If auto-approved: update \code{status} to \code{'dispatched'}
+    \end{itemize}
+\end{enumerate}
+
+\textbf{Acceptance Criteria:} Work order generates with all relevant fields. Auto-approval fires for requests under \$500. Emergency requests are always auto-approved.
+
+\vspace{1em}
+
+% Task 3.3
+\subsection{Task 2.3.3: Build Voice Notification API Route}
+
+\begin{tabularx}{\textwidth}{lX}
+\textbf{Priority:} & \highpri \\
+\textbf{Time:} & 30 minutes (12:00 -- 12:30) \\
+\textbf{Depends on:} & Phase 1 ElevenLabs test (Task 3.4) \\
+\textbf{Blocks:} & Demo ``wow moment'' \\
+\end{tabularx}
+
+\vspace{0.3em}
+
+\textbf{File:} \code{src/app/api/notify/route.ts}
+
+\textbf{Steps:}
+\begin{enumerate}[leftmargin=2em, itemsep=2pt]
+  \item Create the route handler:
+    \begin{enumerate}[itemsep=1pt]
+      \item Fetch the full maintenance request with diagnosis, assigned contractor, and cost estimates
+      \item Fetch the tenant name from the units table
+    \end{enumerate}
+
+  \item Compose the notification text dynamically:
+\begin{lstlisting}[language=JavaScript]
+const message = `Hi ${tenantName}, we've received 
+  your maintenance request for ${unitLabel}. Our 
+  system has identified the issue as 
+  ${diagnosis.description}. A licensed 
+  ${diagnosis.category} contractor, 
+  ${contractor.name}, has been notified and will 
+  contact you within ${urgency === 'emergency' 
+    ? '1 hour' : '24 hours'} to schedule a visit. 
+  The estimated cost range is $${costLow} to 
+  $${costHigh}. ${diagnosis.tenant_safety_note 
+    ? 'Important safety note: ' + 
+      diagnosis.tenant_safety_note : ''}`;
+\end{lstlisting}
+
+  \item Call the ElevenLabs TTS API:
+\begin{lstlisting}[language=JavaScript]
+const response = await fetch(
+  `https://api.elevenlabs.io/v1/text-to-speech/
+   ${VOICE_ID}`,
+  {
+    method: 'POST',
+    headers: {
+      'xi-api-key': process.env.ELEVENLABS_API_KEY,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      text: message,
+      model_id: 'eleven_v3',
+      voice_settings: {
+        stability: 0.6,
+        similarity_boost: 0.8,
+        style: 0.4,
+      }
+    })
+  }
+);
+const audioBuffer = await response.arrayBuffer();
+\end{lstlisting}
+
+  \item Upload the MP3 to Supabase Storage:
+    \begin{itemize}[itemsep=1pt]
+      \item Upload to \code{voice-updates/\{requestId\}.mp3}
+      \item Get the public URL
+    \end{itemize}
+
+  \item Write the audio URL and transcript to the database:
+    \begin{itemize}[itemsep=1pt]
+      \item Update \code{voice\_update\_url} column
+      \item Person 1's realtime subscription will auto-show the audio player
+    \end{itemize}
+
+  \item Return \code{\{ audioUrl, transcript: message \}} in the response.
+\end{enumerate}
+
+\textbf{Acceptance Criteria:} Given a fully-diagnosed request with an assigned contractor, generates a natural-sounding voice message under 3 seconds, uploads it to storage, and the tenant's UI shows the audio player automatically.
+
+\vspace{1em}
+
+% Task 3.4
+\subsection{Task 2.3.4: Build Vetting Results UI Component}
+
+\begin{tabularx}{\textwidth}{lX}
+\textbf{Priority:} & \medpri \\
+\textbf{Time:} & 20 minutes (12:30 -- 12:50) \\
+\textbf{Depends on:} & Task 2.3.1 (vetting route) \\
+\textbf{Blocks:} & Demo depth (shows research quality to judges) \\
+\end{tabularx}
+
+\vspace{0.3em}
+
+\textbf{File:} \code{src/components/VettingCard.tsx}
+
+\textbf{Steps:}
+\begin{enumerate}[leftmargin=2em, itemsep=2pt]
+  \item Create a card component for each vetted contractor:
+    \begin{itemize}[itemsep=1pt]
+      \item Contractor name and rating (from contractor data)
+      \item \textbf{Review summary:} 2--3 sentence AI-generated summary of online reviews
+      \item \textbf{Red flags section:} If \code{red\_flags.length > 0}, show them in amber warning pills. If zero red flags, show a green ``No issues found'' badge.
+      \item \textbf{Cost estimate:} Prominent display of \code{\$low -- \$high} range
+      \item \textbf{Sources:} Collapsible list of source URLs used for grounding (shows judges this is real data, not hallucinated)
+    \end{itemize}
+  \item Integrate into the request detail page between the contractor cards and the voice update section.
+  \item Add a ``Recommended'' badge to the top-ranked contractor (fewest red flags + best rating).
+\end{enumerate}
+
+\textbf{Acceptance Criteria:} Vetting cards render with review summaries, cost estimates, and source links. Red flags are visually prominent. Sources are clickable.
+
+\vspace{1em}
+
+% Task 3.5
+\subsection{Task 2.3.5: Integration Testing of Full Downstream Pipeline}
+
+\begin{tabularx}{\textwidth}{lX}
+\textbf{Priority:} & \highpri \\
+\textbf{Time:} & 10 minutes (12:50 -- 1:00) \\
+\textbf{Depends on:} & All previous Person 3 tasks \\
+\end{tabularx}
+
+\vspace{0.3em}
+
+\textbf{Steps:}
+\begin{enumerate}[leftmargin=2em, itemsep=2pt]
+  \item Using a request that Person 2 already diagnosed and found contractors for:
+    \begin{itemize}[itemsep=1pt]
+      \item Manually trigger \code{/api/vet} with the contractor data
+      \item Verify vetting results appear in the DB and the UI
+      \item Manually trigger \code{/api/work-order}
+      \item Verify work order generates and auto-approval logic works
+      \item Manually trigger \code{/api/notify}
+      \item Verify audio file appears in Supabase Storage and the UI audio player works
+    \end{itemize}
+  \item Measure total time for vetting + work order + notification: target under 20 seconds combined.
+  \item Test the emergency path: create a request with severity 5 / urgency emergency and verify auto-approval bypasses cost threshold.
+\end{enumerate}
+
+\textbf{Acceptance Criteria:} The full downstream pipeline (vet $\rightarrow$ work order $\rightarrow$ voice notify) works end-to-end. Audio plays in the browser. Emergency auto-approval works.
+
+\vspace{0.5em}
+
+\begin{milestonebox}
+\textbf{Person 3 Exit Criteria by 1:00 PM}\\[4pt]
+Three working API routes: \code{/api/vet} (Search grounding for contractor review verification and cost estimation), \code{/api/work-order} (structured work order with auto-approval logic), and \code{/api/notify} (ElevenLabs voice generation + Supabase storage). Plus a \code{VettingCard} UI component showing review summaries, red flags, and sources. All tested on the live deployment.
+\end{milestonebox}
+
+\newpage
+
+% ════════════════════════════════════════
+% END-OF-PHASE SYNC
+% ════════════════════════════════════════
+\section{End-of-Phase Sync: 1:00 PM Standup}
+
+\begin{syncbox}
+{\large\textbf{5-Minute Team Standup --- Everyone stops coding at 1:00 PM sharp.}}\\[4pt]
+{\normalsize This is the most important sync point of the hackathon. The outcome determines Phase 3's strategy.}\\[8pt]
+
+\textbf{Each person reports:}
+\begin{enumerate}[leftmargin=2em, itemsep=4pt]
+  \item \textbf{Person 1 reports:}
+    \begin{itemize}[itemsep=1pt]
+      \item ``Submission form: working / not working''
+      \item ``Diagnosis card: rendering with real data / still on mocks''
+      \item ``Contractor map: rendering / placeholder''
+      \item ``Audio player: working / not tested yet''
+    \end{itemize}
+  \item \textbf{Person 2 reports:}
+    \begin{itemize}[itemsep=1pt]
+      \item ``Diagnosis route: working / flaky / broken''
+      \item ``Contractor route: working / Maps grounding issues / using fallback''
+      \item ``Sequential orchestrator: chaining works / needs debugging''
+      \item Response time observations (any slowness?)
+    \end{itemize}
+  \item \textbf{Person 3 reports:}
+    \begin{itemize}[itemsep=1pt]
+      \item ``Vetting route: working / Search grounding issues''
+      \item ``Work order generation: working / needs fixes''
+      \item ``Voice notification: audio generating and playing / issues with X''
+      \item ``Vetting UI component: done / in progress''
+    \end{itemize}
+\end{enumerate}
+
+\vspace{4pt}
+\textbf{Decision matrix for Phase 3:}
+
+\begin{tabularx}{\textwidth}{|l|X|}
+\hline
+\rowcolor{primary}
+\textcolor{white}{\textbf{Scenario}} & \textcolor{white}{\textbf{Phase 3 Strategy}} \\
+\hline
+All routes work, sequential chain works & Upgrade to WDK durable workflow + build landlord dashboard + polish \\
+\hline
+Diagnosis + contractors work, vetting/voice partial & Skip WDK. Focus Phase 3 on finishing vetting/voice + building dashboard \\
+\hline
+Only diagnosis works, contractors broken & All hands on fixing contractor search. Cut vetting, voice. Demo diagnosis + manual contractor lookup \\
+\hline
+Nothing works end-to-end & All hands on getting diagnosis $\rightarrow$ contractor $\rightarrow$ display working. Cut everything else. \\
+\hline
+\end{tabularx}
+\end{syncbox}
+
+\vspace{1em}
+
+% ════════════════════════════════════════
+% IF BEHIND SCHEDULE
+% ════════════════════════════════════════
+\section{If Behind Schedule: Phase 2 Cutline}
+
+If any person falls behind, cut from the bottom of their task list:
+
+\begin{tabularx}{\textwidth}{|l|l|X|}
+\hline
+\rowcolor{primary}
+\textcolor{white}{\textbf{Person}} & \textcolor{white}{\textbf{Must Have (Critical)}} & \textcolor{white}{\textbf{Can Cut}} \\
+\hline
+Person 1 & Photo capture + upload + submission + diagnosis card & Contractor map (use a list instead), audio player (add in Phase 4) \\
+\hline
+Person 2 & Diagnosis API route + contractor discovery route & Sequential orchestrator (can trigger routes manually), E2E testing (defer to Phase 3) \\
+\hline
+Person 3 & Voice notification route & Vetting route (defer to Phase 3), work order route (hardcode a template), vetting UI component \\
+\hline
+\end{tabularx}
+
+\vspace{0.5em}
+
+\begin{successbox}
+\textbf{Minimum Viable Phase 2:} Even in the worst case, the team must exit Phase 2 with: (1) a working photo submission form, (2) Gemini Vision returning a diagnosis, and (3) Maps grounding returning contractors. These three alone are a demo-able product. Everything else is additive.
+\end{successbox}
+
+\vspace{1em}
+
+% ════════════════════════════════════════
+% FILE STRUCTURE
+% ════════════════════════════════════════
+\section{File Structure After Phase 2}
+
+The following files should exist in the repo by 1:00 PM:
+
+\begin{codebox}
+src/\\
+\quad app/\\
+\quad\quad api/\\
+\quad\quad\quad requests/route.ts \quad\quad\quad\quad\# Person 2 --- submission + orchestrator\\
+\quad\quad\quad diagnose/route.ts \quad\quad\quad\quad\# Person 2 --- Gemini Vision\\
+\quad\quad\quad contractors/route.ts \quad\quad\quad\# Person 2 --- Maps grounding\\
+\quad\quad\quad vet/route.ts \quad\quad\quad\quad\quad\quad\quad\# Person 3 --- Search grounding\\
+\quad\quad\quad work-order/route.ts \quad\quad\quad\# Person 3 --- work order gen\\
+\quad\quad\quad notify/route.ts \quad\quad\quad\quad\quad\# Person 3 --- ElevenLabs TTS\\
+\quad\quad (tenant)/\\
+\quad\quad\quad submit/page.tsx \quad\quad\quad\quad\quad\# Person 1 --- submission form\\
+\quad\quad\quad requests/[id]/page.tsx \quad\# Person 1 --- request detail\\
+\quad\quad (landlord)/\\
+\quad\quad\quad dashboard/page.tsx \quad\quad\quad\# Placeholder (Phase 3)\\
+\quad components/\\
+\quad\quad PhotoCapture.tsx \quad\quad\quad\quad\quad\# Person 1\\
+\quad\quad DiagnosisCard.tsx \quad\quad\quad\quad\# Person 1\\
+\quad\quad ContractorMap.tsx \quad\quad\quad\quad\# Person 1\\
+\quad\quad ContractorCard.tsx \quad\quad\quad\quad\# Person 1\\
+\quad\quad VettingCard.tsx \quad\quad\quad\quad\quad\# Person 3\\
+\quad\quad VoiceUpdate.tsx \quad\quad\quad\quad\quad\# Person 1\\
+\quad lib/\\
+\quad\quad api-types.ts \quad\quad\quad\quad\quad\quad\quad\# Person 2 --- shared API contracts\\
+\quad\quad schemas.ts \quad\quad\quad\quad\quad\quad\quad\quad\# Phase 1 --- Zod schemas\\
+\quad\quad auth.ts \quad\quad\quad\quad\quad\quad\quad\quad\quad\# Person 1 --- role utilities\\
+\quad\quad ai/\\
+\quad\quad\quad diagnose.ts \quad\quad\quad\quad\quad\quad\# Person 2 --- Gemini Vision logic\\
+\quad\quad\quad contractors.ts \quad\quad\quad\quad\quad\# Person 2 --- Maps grounding logic\\
+\quad\quad\quad vet.ts \quad\quad\quad\quad\quad\quad\quad\quad\# Person 3 --- Search grounding logic\\
+\quad\quad audio/\\
+\quad\quad\quad elevenlabs.ts \quad\quad\quad\quad\quad\# Person 3 --- TTS helper\\
+\quad\quad supabase/\\
+\quad\quad\quad client.ts \quad\quad\quad\quad\quad\quad\quad\# Person 1\\
+\quad\quad\quad server.ts \quad\quad\quad\quad\quad\quad\quad\# Person 1\\
+\quad\quad\quad admin.ts \quad\quad\quad\quad\quad\quad\quad\quad\# Person 1\\
+\quad\quad\quad types.ts \quad\quad\quad\quad\quad\quad\quad\quad\# Person 2 (auto-generated)\\
+\quad\quad mocks/\\
+\quad\quad\quad diagnosis.ts \quad\quad\quad\quad\quad\quad\# Person 1 --- fallback mock data\\
+\quad\quad\quad contractors.ts \quad\quad\quad\quad\quad\# Person 1 --- fallback mock data\\
+\end{codebox}
+
+\vspace{2em}
+
+\begin{center}
+\textcolor{textmuted}{\rule{0.4\textwidth}{0.4pt}}\\[6pt]
+\textcolor{textmuted}{\small End of Phase 2 Task Breakdown}
+\end{center}
+
+\end{document}

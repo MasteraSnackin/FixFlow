@@ -1,0 +1,881 @@
+\documentclass[11pt, a4paper]{article}
+
+% ── Packages ──
+\usepackage[margin=1in]{geometry}
+\usepackage{xcolor}
+\usepackage{titlesec}
+\usepackage{enumitem}
+\usepackage{tabularx}
+\usepackage{booktabs}
+\usepackage{colortbl}
+\usepackage{fancyhdr}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{fontenc}
+\usepackage{tcolorbox}
+\usepackage{multirow}
+\usepackage{array}
+\usepackage{tikz}
+\usepackage{lastpage}
+\usepackage{ragged2e}
+
+\tcbuselibrary{skins, breakable}
+
+% ── Colors ──
+\definecolor{primary}{HTML}{1B4F72}
+\definecolor{accent}{HTML}{2E86C1}
+\definecolor{darkgray}{HTML}{2C3E50}
+\definecolor{lightblue}{HTML}{D6EAF8}
+\definecolor{lightteal}{HTML}{D1F2EB}
+\definecolor{lightpurple}{HTML}{E8DAEF}
+\definecolor{lightgray}{HTML}{F2F4F4}
+\definecolor{medblue}{HTML}{2980B9}
+\definecolor{medteal}{HTML}{1ABC9C}
+\definecolor{medpurple}{HTML}{8E44AD}
+\definecolor{critred}{HTML}{E74C3C}
+\definecolor{highamber}{HTML}{F39C12}
+\definecolor{medgreen}{HTML}{27AE60}
+\definecolor{bordergray}{HTML}{BDC3C7}
+\definecolor{textmuted}{HTML}{7F8C8D}
+\definecolor{warningbg}{HTML}{FEF9E7}
+\definecolor{warningborder}{HTML}{F1C40F}
+\definecolor{infobg}{HTML}{EBF5FB}
+\definecolor{infoborder}{HTML}{3498DB}
+
+% ── Hyperref ──
+\hypersetup{
+  colorlinks=true,
+  linkcolor=accent,
+  urlcolor=accent,
+  pdftitle={FixFlow Phase 1: Foundation - Task Breakdown},
+  pdfauthor={Varun Bhandari, Vraj Patel}
+}
+
+% ── Section formatting ──
+\titleformat{\section}
+  {\Large\bfseries\color{primary}}
+  {\thesection}{1em}{}
+  [\vspace{-0.5em}\textcolor{accent}{\rule{\textwidth}{1.5pt}}]
+
+\titleformat{\subsection}
+  {\large\bfseries\color{darkgray}}
+  {\thesubsection}{0.8em}{}
+
+\titleformat{\subsubsection}
+  {\normalsize\bfseries\color{accent}}
+  {\thesubsubsection}{0.6em}{}
+
+% ── Header/Footer ──
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small\textcolor{textmuted}{\textit{FixFlow --- Phase 1: Foundation}}}
+\fancyhead[R]{\small\textcolor{textmuted}{\textit{Zero to Agent Hackathon NYC}}}
+\fancyfoot[C]{\small\textcolor{textmuted}{Page \thepage\ of \pageref{LastPage}}}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0.4pt}
+
+% ── Custom tcolorbox styles ──
+\newtcolorbox{personbox}[2][]{
+  enhanced, breakable,
+  colback=#2!8, colframe=#2!80,
+  coltitle=white, fonttitle=\bfseries\large,
+  title=#1,
+  boxrule=0.8pt, arc=4pt,
+  left=8pt, right=8pt, top=4pt, bottom=4pt,
+  toptitle=3pt, bottomtitle=3pt,
+}
+
+\newtcolorbox{taskbox}[1][]{
+  enhanced,
+  colback=lightgray, colframe=bordergray,
+  boxrule=0.5pt, arc=3pt,
+  left=8pt, right=8pt, top=5pt, bottom=5pt,
+  fontupper=\small,
+  before upper={\textbf{#1}\par\vspace{2pt}},
+}
+
+\newtcolorbox{milestonebox}{
+  enhanced,
+  colback=infobg, colframe=infoborder,
+  boxrule=0.8pt, arc=3pt,
+  left=8pt, right=8pt, top=5pt, bottom=5pt,
+}
+
+\newtcolorbox{warningbox}{
+  enhanced,
+  colback=warningbg, colframe=warningborder,
+  boxrule=0.8pt, arc=3pt,
+  left=8pt, right=8pt, top=5pt, bottom=5pt,
+}
+
+\newtcolorbox{syncbox}{
+  enhanced,
+  colback=lightteal, colframe=medteal,
+  boxrule=0.8pt, arc=4pt,
+  left=10pt, right=10pt, top=6pt, bottom=6pt,
+}
+
+% ── Priority badge command ──
+\newcommand{\critical}{\textcolor{critred}{\rule{6pt}{6pt}}~\textcolor{critred}{\scriptsize\textbf{CRITICAL PATH}}}
+\newcommand{\highpri}{\textcolor{highamber}{\rule{6pt}{6pt}}~\textcolor{highamber}{\scriptsize\textbf{HIGH}}}
+\newcommand{\medpri}{\textcolor{medgreen}{\rule{6pt}{6pt}}~\textcolor{medgreen}{\scriptsize\textbf{MEDIUM}}}
+
+% ── Code command ──
+\newcommand{\code}[1]{\texttt{\small\colorbox{lightgray}{#1}}}
+
+% ── Document ──
+\begin{document}
+
+% ════════════════════════════════════════
+% TITLE PAGE
+% ════════════════════════════════════════
+\begin{titlepage}
+\centering
+\vspace*{2cm}
+
+{\Huge\bfseries\textcolor{primary}{Phase 1: Foundation}}\\[0.6cm]
+{\LARGE\textcolor{accent}{Detailed Task Breakdown}}\\[0.3cm]
+\textcolor{accent}{\rule{0.6\textwidth}{1.5pt}}\\[1cm]
+
+{\Large\textcolor{darkgray}{FixFlow --- AI-Powered Property Maintenance Agent}}\\[0.5cm]
+{\large\textcolor{textmuted}{Zero to Agent: Vercel $\times$ DeepMind Hackathon NYC}}\\[2cm]
+
+\begin{tabular}{rl}
+\textcolor{textmuted}{Duration:} & \textbf{10:00 AM -- 11:00 AM EDT (60 minutes)} \\[6pt]
+\textcolor{textmuted}{Team:} & \textbf{3 developers working in parallel} \\[6pt]
+\textcolor{textmuted}{Goal:} & \textbf{Deployed app + database + proven AI calls} \\[6pt]
+\textcolor{textmuted}{Date:} & \textbf{March 21, 2026} \\[6pt]
+\textcolor{textmuted}{Version:} & \textbf{1.0} \\
+\end{tabular}
+
+\vfill
+
+{\normalsize\textcolor{textmuted}{Prepared by}}\\[4pt]
+{\large\textbf{Varun Bhandari \quad\&\quad Vraj Patel}}\\[2pt]
+{\small\textcolor{textmuted}{Stony Brook University --- M.S. Computer Science}}
+
+\end{titlepage}
+
+% ════════════════════════════════════════
+% PHASE OVERVIEW
+% ════════════════════════════════════════
+\section{Phase Overview}
+
+Phase 1 establishes the three foundational pillars of FixFlow in parallel. Each team member works on a completely independent system so that \textbf{no one blocks anyone else}. By 11:00 AM, the team will have:
+
+\begin{enumerate}[leftmargin=2em]
+  \item A \textbf{deployed Next.js application} on Vercel with working authentication (Person 1)
+  \item A \textbf{fully configured Supabase backend} with schema, RLS, storage, and seed data (Person 2)
+  \item \textbf{All external APIs proven} --- Gemini Vision, Maps grounding, ElevenLabs TTS (Person 3)
+\end{enumerate}
+
+\subsection{Role Assignments}
+
+\begin{tabularx}{\textwidth}{|>{\columncolor{lightblue}}l|l|X|}
+\hline
+\rowcolor{primary}
+\textcolor{white}{\textbf{Role}} & \textcolor{white}{\textbf{Responsibility}} & \textcolor{white}{\textbf{Key Deliverables}} \\
+\hline
+Person 1 --- Frontend Lead & Next.js + Auth + Deploy & Deployed app on Vercel, Clerk auth with roles, app layout shell, Supabase client helpers \\
+\hline
+Person 2 --- Backend Lead & Supabase + Schema + Data & 3 tables with RLS, 2 storage buckets, Realtime enabled, seed data, TypeScript types + Zod schemas \\
+\hline
+Person 3 --- API/Integration Lead & Gemini + ElevenLabs + Sentry & Verified Gemini Vision, Maps grounding, Search grounding, ElevenLabs TTS, Sentry monitoring \\
+\hline
+\end{tabularx}
+
+\subsection{Dependency Map}
+
+\begin{warningbox}
+\textbf{Key Principle:} All three people work on completely independent systems. The only shared artifacts are \textbf{environment variables} (shared via Vercel dashboard and a pinned Discord/Slack message) and \textbf{Zod schemas} (committed to the repo by Person 2 at \textasciitilde10:45 AM). No task in Phase 1 depends on another person's completion.
+\end{warningbox}
+
+\subsection{Priority Legend}
+
+\begin{tabularx}{\textwidth}{lX}
+\critical & Blocks other team members or Phase 2 entirely. Must complete on time. \\[4pt]
+\highpri & Required for Phase 2 to start smoothly. Can slip 5 minutes max. \\[4pt]
+\medpri & Important but can slip 10 minutes without impacting Phase 2. \\
+\end{tabularx}
+
+\newpage
+
+% ════════════════════════════════════════
+% PERSON 1
+% ════════════════════════════════════════
+\section{Person 1 --- Frontend Lead}
+\begin{center}
+\textcolor{medblue}{\large\textbf{Next.js + Authentication + Deployment}}\\[2pt]
+\textcolor{textmuted}{\small Total estimated time: 55--60 minutes}
+\end{center}
+
+\vspace{0.5em}
+
+% Task 1.1
+\subsection{Task 1.1: Scaffold Next.js Project}
+
+\begin{tabularx}{\textwidth}{lX}
+\textbf{Priority:} & \critical \\
+\textbf{Time:} & 10 minutes (10:00 -- 10:10) \\
+\textbf{Depends on:} & Nothing \\
+\textbf{Blocks:} & Every other task (app must exist first) \\
+\end{tabularx}
+
+\vspace{0.3em}
+
+\textbf{Steps:}
+\begin{enumerate}[leftmargin=2em, itemsep=2pt]
+  \item Run the scaffolding command:
+    \begin{quote}\code{npx create-next-app@latest fixflow --typescript --tailwind --app --src-dir}\end{quote}
+  \item Initialize git and push to a \textbf{public} GitHub repository (hackathon requirement).
+  \item Connect the repository to Vercel via the Vercel dashboard for auto-deploys on push.
+  \item Confirm the live deploy URL works (e.g., \code{fixflow.vercel.app}).
+  \item Share the deploy URL and GitHub repo link with Person 2 and Person 3 immediately.
+\end{enumerate}
+
+\textbf{Acceptance Criteria:} A live URL showing the default Next.js page. All team members have the repo cloned.
+
+\vspace{1em}
+
+% Task 1.2
+\subsection{Task 1.2: Install Core Dependencies}
+
+\begin{tabularx}{\textwidth}{lX}
+\textbf{Priority:} & \critical \\
+\textbf{Time:} & 10 minutes (10:10 -- 10:20) \\
+\textbf{Depends on:} & Task 1.1 \\
+\textbf{Blocks:} & Tasks 1.3, 1.4, 1.5 \\
+\end{tabularx}
+
+\vspace{0.3em}
+
+\textbf{Packages to install:}
+\begin{quote}\code{npm i @clerk/nextjs ai @ai-sdk/google @supabase/supabase-js @supabase/ssr}\end{quote}
+
+\textbf{Environment Variables to set on Vercel dashboard (and local \code{.env.local}):}
+
+\begin{tabularx}{\textwidth}{|l|X|}
+\hline
+\rowcolor{primary}
+\textcolor{white}{\textbf{Variable}} & \textcolor{white}{\textbf{Source}} \\
+\hline
+\code{NEXT\_PUBLIC\_CLERK\_PUBLISHABLE\_KEY} & Clerk dashboard (Task 1.3) \\
+\hline
+\code{CLERK\_SECRET\_KEY} & Clerk dashboard (Task 1.3) \\
+\hline
+\code{NEXT\_PUBLIC\_SUPABASE\_URL} & From Person 2 \\
+\hline
+\code{NEXT\_PUBLIC\_SUPABASE\_ANON\_KEY} & From Person 2 \\
+\hline
+\code{SUPABASE\_SERVICE\_ROLE\_KEY} & From Person 2 \\
+\hline
+\code{GOOGLE\_GENERATIVE\_AI\_API\_KEY} & From Person 3 \\
+\hline
+\code{ELEVENLABS\_API\_KEY} & From Person 3 \\
+\hline
+\end{tabularx}
+
+\vspace{0.3em}
+
+\begin{warningbox}
+\textbf{Coordination:} Person 2 and Person 3 will generate their respective keys in parallel. Pin all keys in a shared private channel. Do NOT commit \code{.env.local} to git.
+\end{warningbox}
+
+\vspace{1em}
+
+% Task 1.3
+\subsection{Task 1.3: Set Up Clerk Authentication}
+
+\begin{tabularx}{\textwidth}{lX}
+\textbf{Priority:} & \highpri \\
+\textbf{Time:} & 15 minutes (10:20 -- 10:35) \\
+\textbf{Depends on:} & Task 1.2 \\
+\textbf{Blocks:} & Phase 2 (role-based routing) \\
+\end{tabularx}
+
+\vspace{0.3em}
+
+\textbf{Steps:}
+\begin{enumerate}[leftmargin=2em, itemsep=2pt]
+  \item Create a new Clerk application at \url{https://clerk.com}.
+  \item Add \code{ClerkProvider} wrapping the app in \code{src/app/layout.tsx}.
+  \item Create \code{src/middleware.ts} with \code{clerkMiddleware()} protecting \code{/dashboard} routes.
+  \item Create sign-in page at \code{src/app/sign-in/[[...sign-in]]/page.tsx}.
+  \item Create sign-up page at \code{src/app/sign-up/[[...sign-up]]/page.tsx}.
+  \item Create two test users manually in the Clerk dashboard:
+    \begin{itemize}[itemsep=1pt]
+      \item \textbf{Tenant user:} \code{tenant@fixflow.test} --- set \code{publicMetadata: \{role: "tenant"\}}
+      \item \textbf{Landlord user:} \code{landlord@fixflow.test} --- set \code{publicMetadata: \{role: "landlord"\}}
+    \end{itemize}
+  \item Create a utility function \code{src/lib/auth.ts} that reads the user role from Clerk metadata.
+\end{enumerate}
+
+\textbf{Acceptance Criteria:} Sign in with both test accounts. Role is correctly read from metadata. Dashboard route redirects unauthenticated users to sign-in.
+
+\vspace{1em}
+
+% Task 1.4
+\subsection{Task 1.4: Build App Layout Shell}
+
+\begin{tabularx}{\textwidth}{lX}
+\textbf{Priority:} & \highpri \\
+\textbf{Time:} & 15 minutes (10:35 -- 10:50) \\
+\textbf{Depends on:} & Task 1.3 \\
+\textbf{Blocks:} & Phase 2 (UI components need layout) \\
+\end{tabularx}
+
+\vspace{0.3em}
+
+\textbf{Steps:}
+\begin{enumerate}[leftmargin=2em, itemsep=2pt]
+  \item Create the root layout with a top navigation bar:
+    \begin{itemize}[itemsep=1pt]
+      \item FixFlow logo/wordmark (left)
+      \item User avatar + name from Clerk \code{UserButton} component (right)
+    \end{itemize}
+  \item Create two route groups with separate layouts:
+    \begin{itemize}[itemsep=1pt]
+      \item \code{src/app/(tenant)/} --- tenant-facing pages (submit request, view status)
+      \item \code{src/app/(landlord)/dashboard/} --- landlord dashboard
+    \end{itemize}
+  \item Create a landing page at \code{/} with role-based redirect:
+    \begin{itemize}[itemsep=1pt]
+      \item If tenant $\rightarrow$ redirect to \code{/submit}
+      \item If landlord $\rightarrow$ redirect to \code{/dashboard}
+      \item If not signed in $\rightarrow$ show a simple login prompt
+    \end{itemize}
+  \item Set up Tailwind CSS theme colors in \code{tailwind.config.ts}:
+    \begin{itemize}[itemsep=1pt]
+      \item Primary: \code{\#1B4F72}, Accent: \code{\#2E86C1}, Emergency: \code{\#E74C3C}
+    \end{itemize}
+  \item Create placeholder pages for \code{/submit} and \code{/dashboard} (just headings for now).
+\end{enumerate}
+
+\textbf{Acceptance Criteria:} Navigating to \code{/} redirects based on role. Both route groups render with the shared nav bar. Tailwind theme is applied.
+
+\vspace{1em}
+
+% Task 1.5
+\subsection{Task 1.5: Create Supabase Client Helpers}
+
+\begin{tabularx}{\textwidth}{lX}
+\textbf{Priority:} & \medpri \\
+\textbf{Time:} & 10 minutes (10:50 -- 11:00) \\
+\textbf{Depends on:} & Person 2's Supabase project URL (shared by \textasciitilde10:15) \\
+\textbf{Blocks:} & Phase 2 (all DB operations need these clients) \\
+\end{tabularx}
+
+\vspace{0.3em}
+
+\textbf{Files to create:}
+\begin{enumerate}[leftmargin=2em, itemsep=2pt]
+  \item \code{src/lib/supabase/client.ts} --- Browser client using \code{createBrowserClient()} from \code{@supabase/ssr}. Used in client components for Realtime subscriptions.
+  \item \code{src/lib/supabase/server.ts} --- Server client using \code{createServerClient()} with cookie handling for server components and API routes.
+  \item \code{src/lib/supabase/admin.ts} --- Service-role client for WDK workflows (bypasses RLS). Uses \code{SUPABASE\_SERVICE\_ROLE\_KEY}.
+  \item Import Person 2's generated TypeScript types into \code{src/lib/supabase/types.ts} once available.
+\end{enumerate}
+
+\textbf{Acceptance Criteria:} A simple test query (e.g., fetch all properties) works from both a server component and a client component.
+
+\vspace{0.5em}
+
+\begin{milestonebox}
+\textbf{Person 1 Exit Criteria by 11:00 AM}\\[4pt]
+Deployed Next.js app on Vercel with working Clerk auth (sign in, sign out, role detection), base layout with tenant/landlord route groups, Tailwind theming, and Supabase client helpers wired up. Both test users can sign in and see the correct placeholder page for their role.
+\end{milestonebox}
+
+\newpage
+
+% ════════════════════════════════════════
+% PERSON 2
+% ════════════════════════════════════════
+\section{Person 2 --- Backend \& Data Lead}
+\begin{center}
+\textcolor{medteal}{\large\textbf{Supabase Schema + Storage + Seed Data + Zod Schemas}}\\[2pt]
+\textcolor{textmuted}{\small Total estimated time: 55--60 minutes}
+\end{center}
+
+\vspace{0.5em}
+
+% Task 2.1
+\subsection{Task 2.1: Create Supabase Project \& Schema}
+
+\begin{tabularx}{\textwidth}{lX}
+\textbf{Priority:} & \critical \\
+\textbf{Time:} & 15 minutes (10:00 -- 10:15) \\
+\textbf{Depends on:} & Nothing \\
+\textbf{Blocks:} & Everything else in Person 2's lane, Person 1's Supabase helpers \\
+\end{tabularx}
+
+\vspace{0.3em}
+
+\textbf{Steps:}
+\begin{enumerate}[leftmargin=2em, itemsep=2pt]
+  \item Create a new Supabase project (name: \code{fixflow-hackathon}).
+  \item \textbf{Immediately share} the project URL and anon key with Person 1 via the team channel.
+  \item Run the following SQL in the Supabase SQL Editor to create all three tables:
+\end{enumerate}
+
+\textbf{Table 1: \code{properties}}
+
+\begin{tabularx}{\textwidth}{|l|l|l|X|}
+\hline
+\rowcolor{primary}
+\textcolor{white}{\textbf{Column}} & \textcolor{white}{\textbf{Type}} & \textcolor{white}{\textbf{Constraints}} & \textcolor{white}{\textbf{Description}} \\
+\hline
+id & uuid & PK, default \code{gen\_random\_uuid()} & Unique property ID \\
+\hline
+landlord\_id & text & NOT NULL & Clerk user ID of the landlord \\
+\hline
+address & text & NOT NULL & Full street address \\
+\hline
+city & text & NOT NULL & City \\
+\hline
+state & text & NOT NULL & State abbreviation \\
+\hline
+zip & text & NOT NULL & ZIP code \\
+\hline
+unit\_count & integer & DEFAULT 1 & Number of units \\
+\hline
+created\_at & timestamptz & DEFAULT now() & Creation timestamp \\
+\hline
+\end{tabularx}
+
+\vspace{0.5em}
+
+\textbf{Table 2: \code{units}}
+
+\begin{tabularx}{\textwidth}{|l|l|l|X|}
+\hline
+\rowcolor{primary}
+\textcolor{white}{\textbf{Column}} & \textcolor{white}{\textbf{Type}} & \textcolor{white}{\textbf{Constraints}} & \textcolor{white}{\textbf{Description}} \\
+\hline
+id & uuid & PK & Unique unit ID \\
+\hline
+property\_id & uuid & FK $\rightarrow$ properties.id & Parent property \\
+\hline
+unit\_label & text & NOT NULL & e.g., ``Apt 3B'' \\
+\hline
+tenant\_id & text & NULLABLE & Clerk user ID \\
+\hline
+tenant\_name & text & NULLABLE & Display name \\
+\hline
+tenant\_phone & text & NULLABLE & Phone number \\
+\hline
+\end{tabularx}
+
+\vspace{0.5em}
+
+\textbf{Table 3: \code{maintenance\_requests}} (primary data table)
+
+\begin{tabularx}{\textwidth}{|l|l|l|X|}
+\hline
+\rowcolor{primary}
+\textcolor{white}{\textbf{Column}} & \textcolor{white}{\textbf{Type}} & \textcolor{white}{\textbf{Constraints}} & \textcolor{white}{\textbf{Description}} \\
+\hline
+id & uuid & PK & Unique request ID \\
+\hline
+unit\_id & uuid & FK $\rightarrow$ units.id & Where the issue is \\
+\hline
+tenant\_id & text & NOT NULL & Reporting tenant \\
+\hline
+photo\_url & text & NOT NULL & Supabase Storage URL \\
+\hline
+description & text & NULLABLE & Tenant text input \\
+\hline
+status & text & DEFAULT `submitted' & submitted, diagnosed, dispatched, in\_progress, resolved \\
+\hline
+diagnosis & jsonb & NULLABLE & Gemini vision output \\
+\hline
+contractors & jsonb & NULLABLE & Maps grounding results \\
+\hline
+vetting & jsonb & NULLABLE & Search grounding results \\
+\hline
+work\_order & jsonb & NULLABLE & Generated work order \\
+\hline
+voice\_update\_url & text & NULLABLE & ElevenLabs audio URL \\
+\hline
+assigned\_contractor & jsonb & NULLABLE & Selected contractor \\
+\hline
+estimated\_cost\_low & integer & NULLABLE & Low estimate (\$) \\
+\hline
+estimated\_cost\_high & integer & NULLABLE & High estimate (\$) \\
+\hline
+landlord\_approved & boolean & DEFAULT false & Approval status \\
+\hline
+created\_at & timestamptz & DEFAULT now() & Submission time \\
+\hline
+updated\_at & timestamptz & DEFAULT now() & Last update time \\
+\hline
+\end{tabularx}
+
+\vspace{1em}
+
+% Task 2.2
+\subsection{Task 2.2: Configure Row Level Security (RLS)}
+
+\begin{tabularx}{\textwidth}{lX}
+\textbf{Priority:} & \highpri \\
+\textbf{Time:} & 10 minutes (10:15 -- 10:25) \\
+\textbf{Depends on:} & Task 2.1 \\
+\end{tabularx}
+
+\vspace{0.3em}
+
+\textbf{Policies to create:}
+\begin{enumerate}[leftmargin=2em, itemsep=2pt]
+  \item \textbf{Tenants --- SELECT own requests:} \code{tenant\_id = auth.uid()} on \code{maintenance\_requests}
+  \item \textbf{Tenants --- INSERT own requests:} \code{tenant\_id = auth.uid()} on \code{maintenance\_requests}
+  \item \textbf{Landlords --- SELECT all requests on their properties:} Join through \code{units} $\rightarrow$ \code{properties} where \code{landlord\_id = auth.uid()}
+  \item \textbf{Landlords --- UPDATE status and approval:} Same join condition
+  \item \textbf{Service role:} Full access (for WDK workflows). Use the \code{SUPABASE\_SERVICE\_ROLE\_KEY} which bypasses RLS.
+\end{enumerate}
+
+\textbf{Acceptance Criteria:} Tenant user can only see their own requests. Landlord can see all requests across their properties.
+
+\vspace{1em}
+
+% Task 2.3
+\subsection{Task 2.3: Set Up Storage Buckets}
+
+\begin{tabularx}{\textwidth}{lX}
+\textbf{Priority:} & \highpri \\
+\textbf{Time:} & 5 minutes (10:25 -- 10:30) \\
+\textbf{Depends on:} & Task 2.1 \\
+\end{tabularx}
+
+\vspace{0.3em}
+
+\textbf{Two buckets:}
+\begin{enumerate}[leftmargin=2em, itemsep=2pt]
+  \item \code{maintenance-photos} --- Private bucket. Signed URLs for access. Max 10MB per file. Allowed MIME types: \code{image/jpeg}, \code{image/png}, \code{image/webp}.
+  \item \code{voice-updates} --- Public read access. Write restricted to service role only. Allowed MIME types: \code{audio/mpeg} (MP3).
+\end{enumerate}
+
+\textbf{Acceptance Criteria:} Test upload via Supabase dashboard confirms both buckets work.
+
+\vspace{1em}
+
+% Task 2.4
+\subsection{Task 2.4: Enable Supabase Realtime}
+
+\begin{tabularx}{\textwidth}{lX}
+\textbf{Priority:} & \medpri \\
+\textbf{Time:} & 5 minutes (10:30 -- 10:35) \\
+\textbf{Depends on:} & Task 2.1 \\
+\end{tabularx}
+
+\vspace{0.3em}
+
+\textbf{Steps:}
+\begin{enumerate}[leftmargin=2em, itemsep=2pt]
+  \item Go to Supabase Dashboard $\rightarrow$ Database $\rightarrow$ Replication.
+  \item Enable Realtime publication on \code{maintenance\_requests} table for INSERT, UPDATE, and DELETE events.
+  \item Test by manually inserting a row and confirming the event fires in the Supabase Realtime inspector.
+\end{enumerate}
+
+\vspace{1em}
+
+% Task 2.5
+\subsection{Task 2.5: Seed Demo Data}
+
+\begin{tabularx}{\textwidth}{lX}
+\textbf{Priority:} & \highpri \\
+\textbf{Time:} & 10 minutes (10:35 -- 10:45) \\
+\textbf{Depends on:} & Task 2.1, Person 1's Clerk user IDs \\
+\end{tabularx}
+
+\vspace{0.3em}
+
+\textbf{Insert the following seed data:}
+\begin{itemize}[leftmargin=2em, itemsep=2pt]
+  \item \textbf{1 Property:} 482 Atlantic Ave, Brooklyn, NY 11217 (linked to landlord Clerk ID)
+  \item \textbf{3 Units:} Apt 1A (tenant: Sarah, phone: 555-0101), Apt 2B (tenant: Marcus, phone: 555-0102), Apt 3C (vacant)
+  \item Link unit tenants to the test Clerk tenant user ID
+\end{itemize}
+
+\begin{warningbox}
+\textbf{Coordination:} Share the seeded property address (\textbf{482 Atlantic Ave, Brooklyn, NY 11217}) with Person 3 immediately so they can use it for Maps grounding tests.
+\end{warningbox}
+
+\vspace{1em}
+
+% Task 2.6
+\subsection{Task 2.6: Generate TypeScript Types \& Zod Schemas}
+
+\begin{tabularx}{\textwidth}{lX}
+\textbf{Priority:} & \highpri \\
+\textbf{Time:} & 15 minutes (10:45 -- 11:00) \\
+\textbf{Depends on:} & Task 2.1 \\
+\textbf{Blocks:} & Phase 2 (all team members code against these schemas) \\
+\end{tabularx}
+
+\vspace{0.3em}
+
+\textbf{Steps:}
+\begin{enumerate}[leftmargin=2em, itemsep=2pt]
+  \item Run \code{npx supabase gen types typescript} and save to \code{src/lib/supabase/types.ts}.
+  \item Create \code{src/lib/schemas.ts} with three Zod schemas:
+    \begin{itemize}[itemsep=1pt]
+      \item \code{DiagnosisSchema} --- category (enum), severity (1--5), urgency (enum), description, affected\_system, recommended\_action, tenant\_safety\_note, confidence (0--1)
+      \item \code{ContractorSchema} --- name, address, phone, rating, total\_reviews, distance\_miles, hours\_today, is\_open\_now, maps\_url
+      \item \code{VettingSchema} --- contractor\_name, review\_summary, red\_flags (array), estimated\_cost\_low, estimated\_cost\_high, sources (array)
+    \end{itemize}
+  \item Commit and push to the repo so Person 1 and Person 3 can import them.
+\end{enumerate}
+
+\textbf{Acceptance Criteria:} All three Zod schemas export correctly. Person 1 and Person 3 can import them without TypeScript errors.
+
+\vspace{0.5em}
+
+\begin{milestonebox}
+\textbf{Person 2 Exit Criteria by 11:00 AM}\\[4pt]
+Supabase fully configured: 3 tables with RLS policies, 2 storage buckets, Realtime enabled on \code{maintenance\_requests}, demo data seeded (1 property, 3 units), and TypeScript types + Zod schemas committed to repo for the entire team.
+\end{milestonebox}
+
+\newpage
+
+% ════════════════════════════════════════
+% PERSON 3
+% ════════════════════════════════════════
+\section{Person 3 --- API \& Integrations Lead}
+\begin{center}
+\textcolor{medpurple}{\large\textbf{Gemini Vision + Maps Grounding + ElevenLabs + Sentry}}\\[2pt]
+\textcolor{textmuted}{\small Total estimated time: 55--60 minutes}
+\end{center}
+
+\vspace{0.5em}
+
+% Task 3.1
+\subsection{Task 3.1: Set Up Hackathon Gemini Account}
+
+\begin{tabularx}{\textwidth}{lX}
+\textbf{Priority:} & \critical \\
+\textbf{Time:} & 10 minutes (10:00 -- 10:10) \\
+\textbf{Depends on:} & Nothing \\
+\textbf{Blocks:} & Tasks 3.2, 3.3 and all AI functionality \\
+\end{tabularx}
+
+\vspace{0.3em}
+
+\textbf{Steps:}
+\begin{enumerate}[leftmargin=2em, itemsep=2pt]
+  \item Follow the hackathon setup guide at \code{goo.gle/hackathon-account}.
+  \item Activate the temporary Google AI Studio account with elevated quota.
+  \item Confirm access to the \code{gemini-3.1-pro} model in AI Studio.
+  \item Generate an API key from AI Studio $\rightarrow$ Get API Key.
+  \item Test a basic text prompt in the AI Studio playground to verify quota works.
+  \item \textbf{Immediately share} the API key with Person 1 via the team channel.
+\end{enumerate}
+
+\begin{warningbox}
+\textbf{Critical:} These hackathon accounts are temporary and will be deleted after the event. Export any code or assets you want to keep.
+\end{warningbox}
+
+\vspace{1em}
+
+% Task 3.2
+\subsection{Task 3.2: Test Gemini Vision with a Maintenance Photo}
+
+\begin{tabularx}{\textwidth}{lX}
+\textbf{Priority:} & \critical \\
+\textbf{Time:} & 15 minutes (10:10 -- 10:25) \\
+\textbf{Depends on:} & Task 3.1 \\
+\textbf{Blocks:} & Phase 2 (entire diagnosis feature) \\
+\end{tabularx}
+
+\vspace{0.3em}
+
+\textbf{Steps:}
+\begin{enumerate}[leftmargin=2em, itemsep=2pt]
+  \item Create \code{src/lib/ai/test-vision.ts} as a runnable test script.
+  \item Use the Vercel AI SDK with the Google provider:
+    \begin{quote}
+    \code{import \{ google \} from `@ai-sdk/google'}\\
+    \code{import \{ generateObject \} from `ai'}
+    \end{quote}
+  \item Send a test photo of a water-stained ceiling (download a stock image beforehand or use your phone).
+  \item Use \code{generateObject()} with the \code{DiagnosisSchema} Zod schema from Person 2.
+  \item Verify the structured JSON output matches the expected schema fields.
+  \item Log and record the response time. Target: \textbf{under 5 seconds}.
+  \item Test with 3 different photos:
+    \begin{itemize}[itemsep=1pt]
+      \item Water-stained ceiling $\rightarrow$ should classify as \textbf{plumbing}, severity 3--4
+      \item Sparking electrical outlet $\rightarrow$ should classify as \textbf{electrical}, severity 4--5, urgency \textbf{emergency}
+      \item Cracked window $\rightarrow$ should classify as \textbf{structural}, severity 2--3
+    \end{itemize}
+\end{enumerate}
+
+\textbf{System Prompt to use:}
+\begin{quote}
+\textit{``You are a property maintenance diagnostic agent. Analyze the provided photo and optional text description to diagnose the maintenance issue. Be specific about the affected system, severity, and recommended action. If you cannot determine the issue from the photo, set confidence below 0.6.''}
+\end{quote}
+
+\textbf{Acceptance Criteria:} All 3 test photos return valid structured JSON matching the schema. Response time is consistently under 5 seconds. Confidence scores are above 0.7 for clear photos.
+
+\vspace{1em}
+
+% Task 3.3
+\subsection{Task 3.3: Test Gemini Maps Grounding}
+
+\begin{tabularx}{\textwidth}{lX}
+\textbf{Priority:} & \critical \\
+\textbf{Time:} & 15 minutes (10:25 -- 10:40) \\
+\textbf{Depends on:} & Task 3.1, Person 2's seeded address \\
+\textbf{Blocks:} & Phase 2 (entire contractor discovery feature) \\
+\end{tabularx}
+
+\vspace{0.3em}
+
+\textbf{Steps:}
+\begin{enumerate}[leftmargin=2em, itemsep=2pt]
+  \item Create \code{src/lib/ai/test-maps.ts}.
+  \item Call Gemini 3.1 Pro with Maps grounding enabled using the \code{google\_maps} tool configuration in the AI SDK.
+  \item Use the seeded address from Person 2: \textbf{482 Atlantic Ave, Brooklyn, NY 11217}.
+  \item Test query: \textit{``Find licensed plumbers within 10 miles of 482 Atlantic Ave, Brooklyn, NY 11217. Return their name, address, phone, Google rating, number of reviews, distance, and whether they are currently open.''}
+  \item Verify the response contains:
+    \begin{itemize}[itemsep=1pt]
+      \item Real business names (not hallucinated)
+      \item Valid phone numbers and addresses
+      \item Accurate Google Maps ratings
+      \item At least 5 results
+    \end{itemize}
+  \item Test with different categories: plumber, electrician, HVAC technician.
+  \item Document any quirks in the response format (Person 1 and 2 will need this for Phase 2).
+\end{enumerate}
+
+\begin{warningbox}
+\textbf{This is the riskiest integration.} Maps grounding is a newer Gemini capability and may return differently structured data than expected. If it fails or returns hallucinated data, escalate to the team immediately --- the fallback is to use a standard Google Places API call instead.
+\end{warningbox}
+
+\textbf{Acceptance Criteria:} Maps grounding returns real contractors with valid Google Maps data. Results are consistent across multiple calls. Response time is under 8 seconds.
+
+\vspace{1em}
+
+% Task 3.4
+\subsection{Task 3.4: Test ElevenLabs TTS}
+
+\begin{tabularx}{\textwidth}{lX}
+\textbf{Priority:} & \highpri \\
+\textbf{Time:} & 10 minutes (10:40 -- 10:50) \\
+\textbf{Depends on:} & Nothing (independent API) \\
+\textbf{Blocks:} & Phase 2 (voice notification feature) \\
+\end{tabularx}
+
+\vspace{0.3em}
+
+\textbf{Steps:}
+\begin{enumerate}[leftmargin=2em, itemsep=2pt]
+  \item Activate the hackathon ElevenLabs Creator tier credits (provided day-of).
+  \item Create \code{src/lib/audio/elevenlabs.ts} with a helper function:
+    \begin{quote}
+    \code{async function generateVoiceUpdate(text: string): Promise<Buffer>}
+    \end{quote}
+  \item Use the \code{eleven\_v3} model for highest quality.
+  \item Browse the ElevenLabs voice library and pick a professional, friendly voice. Record the voice ID.
+  \item Test with the actual notification template:
+    \begin{quote}
+    \textit{``Hi Sarah, we've received your maintenance request for Apt 1A. Our system has identified the issue as a plumbing leak in the bathroom ceiling. A licensed plumber, Brooklyn Plumbing Co, has been notified and will contact you within 2 hours. The estimated cost range is \$200 to \$450.''}
+    \end{quote}
+  \item Verify: audio quality is clear, latency is under 3 seconds, output is valid MP3.
+  \item Share the API key and chosen voice ID with Person 1 for env vars.
+\end{enumerate}
+
+\textbf{Acceptance Criteria:} Voice update audio sounds professional and natural. Generation latency is under 3 seconds. MP3 output plays correctly in a browser.
+
+\vspace{1em}
+
+% Task 3.5
+\subsection{Task 3.5: Set Up Sentry Monitoring}
+
+\begin{tabularx}{\textwidth}{lX}
+\textbf{Priority:} & \medpri \\
+\textbf{Time:} & 10 minutes (10:50 -- 11:00) \\
+\textbf{Depends on:} & Task 1.1 (app must exist) \\
+\end{tabularx}
+
+\vspace{0.3em}
+
+\textbf{Steps:}
+\begin{enumerate}[leftmargin=2em, itemsep=2pt]
+  \item Sign up and claim credits at \code{sentry.io/signup/?code=ZTA26}.
+  \item Run the Sentry wizard: \code{npx @sentry/wizard@latest -i nextjs}.
+  \item Add \code{vercelAIIntegration()} to instrument AI SDK calls:
+    \begin{quote}
+    This gives tracing on every Gemini call (latency, tokens, errors) --- excellent to show judges.
+    \end{quote}
+  \item Verify a test error appears in the Sentry dashboard.
+\end{enumerate}
+
+\textbf{Acceptance Criteria:} Sentry is receiving events. AI SDK calls will be traced once Phase 2 API routes are built.
+
+\vspace{0.5em}
+
+\begin{milestonebox}
+\textbf{Person 3 Exit Criteria by 11:00 AM}\\[4pt]
+All 3 external APIs verified and working: Gemini Vision returns structured diagnoses from photos, Maps grounding returns real contractors for the demo address, ElevenLabs generates clear voice audio under 3 seconds. Sentry monitoring is live. All API quirks are documented and shared with the team.
+\end{milestonebox}
+
+\newpage
+
+% ════════════════════════════════════════
+% SYNC POINT
+% ════════════════════════════════════════
+\section{Sync Point: 11:00 AM Standup}
+
+\begin{syncbox}
+{\large\textbf{5-Minute Team Standup --- Everyone stops coding at 11:00 AM sharp.}}\\[8pt]
+Each person reports their status and shares critical information for Phase 2:
+
+\begin{enumerate}[leftmargin=2em, itemsep=4pt]
+  \item \textbf{Person 1 reports:}
+    \begin{itemize}[itemsep=1pt]
+      \item Deploy URL confirmed working
+      \item Auth working for both roles
+      \item Any Tailwind or layout issues to flag
+    \end{itemize}
+  \item \textbf{Person 2 reports:}
+    \begin{itemize}[itemsep=1pt]
+      \item Supabase credentials confirmed shared
+      \item Zod schemas committed to repo (confirm import path)
+      \item Any schema changes from initial plan
+    \end{itemize}
+  \item \textbf{Person 3 reports:}
+    \begin{itemize}[itemsep=1pt]
+      \item All API keys shared
+      \item Maps grounding response format (any surprises?)
+      \item ElevenLabs voice ID selected
+      \item Any rate limit concerns or API quirks
+    \end{itemize}
+\end{enumerate}
+
+\textbf{Decision point:} If Maps grounding is unreliable, the team decides on a fallback strategy (Google Places API) before entering Phase 2.
+\end{syncbox}
+
+\vspace{1em}
+
+\section{If Someone Finishes Early}
+
+Phase 1 tasks are estimated conservatively. If someone completes their tasks before 11:00 AM, they should pull forward Phase 2 work:
+
+\begin{tabularx}{\textwidth}{|l|X|}
+\hline
+\rowcolor{primary}
+\textcolor{white}{\textbf{Person}} & \textcolor{white}{\textbf{Pull-Forward Task}} \\
+\hline
+Person 1 & Start building the photo upload component (camera capture, image preview, upload to Supabase Storage) \\
+\hline
+Person 2 & Write the skeleton \code{POST /api/requests} route (accept multipart form, validate, insert into DB) \\
+\hline
+Person 3 & Test Gemini Search grounding for contractor vetting (next API to be integrated in Phase 2) \\
+\hline
+\end{tabularx}
+
+\vspace{2em}
+
+\begin{center}
+\textcolor{textmuted}{\rule{0.4\textwidth}{0.4pt}}\\[6pt]
+\textcolor{textmuted}{\small End of Phase 1 Task Breakdown}
+\end{center}
+
+\end{document}

@@ -1,0 +1,939 @@
+\documentclass[12pt,a4paper]{article}
+
+% ── Packages ──
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+% \usepackage{lmodern} % Use default Computer Modern
+\usepackage[margin=1in]{geometry}
+\usepackage{hyperref}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{enumitem}
+\usepackage{tabularx}
+\usepackage{graphicx}
+\usepackage{titlesec}
+\usepackage{fancyhdr}
+\usepackage{xcolor}
+\usepackage{parskip}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue!60!black,
+    urlcolor=blue!60!black,
+    citecolor=blue!60!black,
+    pdftitle={FixFlow -- Software Requirements Specification},
+    pdfauthor={Varun Bhandari \& Vraj Patel},
+}
+
+% ── Header / Footer ──
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small FixFlow --- SRS v1.0}
+\fancyhead[R]{\small March 21, 2026}
+\fancyfoot[C]{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+
+% ── Column type for wrapping ──
+\newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
+
+\begin{document}
+
+% ══════════════════════════════════════════════════════════════
+% Title Page
+% ══════════════════════════════════════════════════════════════
+\begin{titlepage}
+    \centering
+    \vspace*{3cm}
+    {\Huge\bfseries SOFTWARE REQUIREMENTS\\[0.3cm] SPECIFICATION\par}
+    \vspace{1.5cm}
+    {\LARGE\bfseries FixFlow\par}
+    \vspace{0.5cm}
+    {\large\itshape AI-Powered Property Maintenance Agent\par}
+    \vspace{1.5cm}
+    {\large Zero to Agent: Vercel $\times$ DeepMind Hackathon NYC\par}
+    \vspace{2cm}
+    {\large Prepared by\par}
+    \vspace{0.4cm}
+    {\Large\bfseries Varun Bhandari \& Vraj Patel\par}
+    \vspace{0.4cm}
+    {\large Stony Brook University --- M.S. Computer Science\par}
+    \vspace{2cm}
+    {\large March 21, 2026 \textbar\ Version 1.0\par}
+\end{titlepage}
+
+% ══════════════════════════════════════════════════════════════
+% Table of Contents
+% ══════════════════════════════════════════════════════════════
+\tableofcontents
+\newpage
+
+% ══════════════════════════════════════════════════════════════
+% 1. Introduction
+% ══════════════════════════════════════════════════════════════
+\section{Introduction}
+
+\subsection{Purpose}
+
+This Software Requirements Specification (SRS) defines the complete functional and non-functional requirements for FixFlow, an AI-powered property maintenance agent built for the Zero to Agent: Vercel $\times$ DeepMind Hackathon NYC (March 21, 2026). FixFlow transforms the property maintenance workflow from a fragmented, manual process into an intelligent, end-to-end pipeline: a tenant submits a photo, and the agent diagnoses the issue, finds qualified contractors, generates a work order, and communicates status updates via voice --- all within seconds.
+
+\subsection{Scope}
+
+FixFlow targets independent landlords and small property managers who manage 1--10 rental units. These users currently coordinate maintenance via text messages, phone calls, and manual contractor searches. The system will provide:
+
+\begin{itemize}
+    \item AI-powered visual diagnosis of maintenance issues from tenant-submitted photos
+    \item Automated urgency triage (emergency vs.\ routine) with severity classification
+    \item Intelligent contractor discovery using Google Maps grounding with ratings, distance, and hours
+    \item Contractor vetting via Google Search grounding (reviews, licensing verification, cost estimation)
+    \item Automated work order generation with structured issue details
+    \item Voice-based tenant status updates via ElevenLabs text-to-speech
+    \item Persistent maintenance history per property unit for pattern detection
+    \item Real-time dashboard for landlords to monitor all active requests
+\end{itemize}
+
+\subsection{Definitions \& Acronyms}
+
+\begin{longtable}{L{3.5cm} L{10.5cm}}
+\toprule
+\textbf{Term} & \textbf{Definition} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Term} & \textbf{Definition} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+FixFlow & The AI maintenance agent system described in this document \\
+\midrule
+Tenant & A renter who submits maintenance requests via the system \\
+\midrule
+Landlord / PM & Property owner or manager who oversees maintenance operations \\
+\midrule
+Gemini 3.1 Pro & Google DeepMind's multimodal LLM with 1M-token context, vision, Maps grounding, and Search grounding \\
+\midrule
+Maps Grounding & Gemini's native ability to query Google Maps data (places, directions, ratings) within an API call \\
+\midrule
+Search Grounding & Gemini's native ability to query Google Search and return cited, grounded responses \\
+\midrule
+ElevenLabs & Third-party AI audio platform providing TTS, sound effects, and conversational AI \\
+\midrule
+Vercel AI SDK & Vercel's framework for building AI-powered applications with streaming, tool use, and structured output \\
+\midrule
+WDK & Vercel Workflow Development Kit for durable, multi-step serverless workflows \\
+\midrule
+Supabase & Open-source Backend-as-a-Service providing PostgreSQL, auth, storage, and real-time subscriptions \\
+\midrule
+SRS & Software Requirements Specification (this document) \\
+\midrule
+DXA & Document XML Architecture unit (1440 DXA = 1 inch) \\
+\end{longtable}
+
+\subsection{Target Users}
+
+The system serves two primary user classes with distinct needs:
+
+\begin{longtable}{L{2.5cm} L{5cm} L{6.5cm}}
+\toprule
+\textbf{User Class} & \textbf{Description} & \textbf{Key Needs} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{User Class} & \textbf{Description} & \textbf{Key Needs} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+Tenant & Renter in a managed property & Easy issue submission (photo + text), fast response, status visibility \\
+\midrule
+Landlord / PM & Independent property owner managing 1--10 units & Automated triage, contractor finding, cost tracking, maintenance history \\
+\end{longtable}
+
+\subsection{Hackathon Alignment}
+
+FixFlow addresses hackathon Problem Statement 2 (Multi-Modal Agents) and Problem Statement 3 (AI Applications). It leverages Gemini's multimodal capabilities (vision for photo diagnosis, Maps grounding for contractor discovery, Search grounding for vetting) and delivers a polished, useful application that solves a real problem for millions of small landlords.
+
+\begin{longtable}{L{2.8cm} L{1.8cm} L{9cm}}
+\toprule
+\textbf{Judging Criterion} & \textbf{Weight} & \textbf{How FixFlow Scores} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Judging Criterion} & \textbf{Weight} & \textbf{How FixFlow Scores} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+Live Demo & 45\% & Full pipeline in under 30 seconds: photo $\rightarrow$ diagnosis $\rightarrow$ map $\rightarrow$ contractors $\rightarrow$ voice update. Touches vision, Maps, Search, and voice in one seamless flow. \\
+\midrule
+Creativity \& Originality & 35\% & No product combines AI photo diagnosis + Maps contractor matching + automated dispatch + voice communication for small landlords. Enterprise tools exist but nothing AI-native for independents. \\
+\midrule
+Impact Potential & 20\% & 10M+ small landlords in the US. Reactive maintenance costs 3--5$\times$ preventive. Tenant turnover from slow response costs \$4,000/unit average. \\
+\end{longtable}
+
+% ══════════════════════════════════════════════════════════════
+% 2. Overall Description
+% ══════════════════════════════════════════════════════════════
+\section{Overall Description}
+
+\subsection{Product Perspective}
+
+FixFlow is a standalone web application deployed on Vercel. It is not an extension of an existing system. It operates as an intelligent agent that orchestrates multiple AI services (Gemini, ElevenLabs) and data platforms (Supabase, Google Maps, Google Search) to automate the end-to-end maintenance workflow. The system is designed to function autonomously once a maintenance request is submitted, requiring landlord intervention only for approval of high-cost repairs.
+
+\subsection{Product Features (High-Level)}
+
+\begin{longtable}{L{1.8cm} L{7.5cm} L{3cm}}
+\toprule
+\textbf{Feature ID} & \textbf{Feature Name} & \textbf{Priority} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Feature ID} & \textbf{Feature Name} & \textbf{Priority} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+F-001 & Photo-Based Issue Diagnosis (Gemini Vision) & Critical \\
+\midrule
+F-002 & Urgency Triage \& Severity Classification & Critical \\
+\midrule
+F-003 & Contractor Discovery via Maps Grounding & Critical \\
+\midrule
+F-004 & Contractor Vetting via Search Grounding & Critical \\
+\midrule
+F-005 & Automated Work Order Generation & Critical \\
+\midrule
+F-006 & Voice-Based Tenant Status Updates (ElevenLabs) & High \\
+\midrule
+F-007 & Landlord Dashboard with Real-Time Updates & High \\
+\midrule
+F-008 & Maintenance History \& Pattern Detection & Medium \\
+\midrule
+F-009 & Cost Estimation \& Budget Tracking & Medium \\
+\midrule
+F-010 & Multi-Property Unit Management & Low (post-hack) \\
+\end{longtable}
+
+\subsection{Operating Environment}
+
+\begin{itemize}
+    \item \textbf{Deployment:} Vercel (serverless functions, edge network, Vercel Sandbox)
+    \item \textbf{Runtime:} Node.js 20+ (Next.js 14+ App Router with Server Components)
+    \item \textbf{Database:} Supabase (PostgreSQL 15+, Supabase Storage for images, Supabase Realtime for dashboard)
+    \item \textbf{AI Backend:} Google AI Studio (Gemini 3.1 Pro with temporary hackathon account)
+    \item \textbf{Audio:} ElevenLabs API (Creator tier, 1-month provided by hackathon)
+    \item \textbf{Auth:} Clerk (Next.js integration, OAuth 2.0, role-based access for landlord vs.\ tenant)
+    \item \textbf{Monitoring:} Sentry with AI monitoring integration
+    \item \textbf{Browser Support:} Chrome 120+, Safari 17+, Firefox 120+, mobile browsers
+\end{itemize}
+
+\subsection{Constraints}
+
+\begin{itemize}
+    \item Build time: 7 hours maximum (10:00 AM -- 5:00 PM EDT)
+    \item Team size: 2 developers
+    \item Gemini API quota: Elevated but temporary (deleted after hackathon)
+    \item ElevenLabs: Creator tier limits (100K characters/month, $\sim$30 voice updates in demo)
+    \item Repository must be public and open-source
+    \item All code must be written during the hackathon (no pre-existing work)
+    \item Demo must be a live technical demo, not a presentation
+\end{itemize}
+
+\subsection{Assumptions}
+
+\begin{itemize}
+    \item Tenants have smartphone cameras capable of capturing maintenance issues
+    \item Landlords have internet access and a modern web browser
+    \item Google Maps data is sufficiently accurate for contractor discovery in major US metros
+    \item ElevenLabs latency is acceptable for near-real-time voice generation (target $<$ 3 seconds)
+    \item Gemini 3.1 Pro's vision capabilities can reliably classify common maintenance categories (plumbing, electrical, HVAC, structural, appliance, pest, cosmetic)
+\end{itemize}
+
+% ══════════════════════════════════════════════════════════════
+% 3. System Architecture
+% ══════════════════════════════════════════════════════════════
+\section{System Architecture}
+
+\subsection{Architecture Overview}
+
+FixFlow uses a three-tier architecture: a Next.js frontend (React Server Components + client components), a Vercel serverless backend (API routes + WDK durable workflows), and external AI/data services (Gemini, ElevenLabs, Supabase). The AI agent is implemented using the Vercel AI SDK with Gemini as the model provider and multiple tool definitions for structured output.
+
+\begin{longtable}{L{2.5cm} L{4.5cm} L{6.5cm}}
+\toprule
+\textbf{Layer} & \textbf{Technology} & \textbf{Responsibility} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Layer} & \textbf{Technology} & \textbf{Responsibility} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+Presentation & Next.js 14 (App Router), React 18, Tailwind CSS & Tenant submission form, landlord dashboard, real-time status updates, audio playback \\
+\midrule
+Application & Vercel Serverless Functions, AI SDK, WDK & Agent orchestration, Gemini API calls, ElevenLabs API calls, business logic, work order generation \\
+\midrule
+Data & Supabase (PostgreSQL + Storage + Realtime) & Maintenance requests, property data, contractor cache, images, audio files, real-time subscriptions \\
+\midrule
+AI Services & Gemini 3.1 Pro, ElevenLabs v3 TTS & Vision analysis, Maps grounding, Search grounding, structured output, voice generation \\
+\end{longtable}
+
+\subsection{Agent Pipeline Flow}
+
+The core agent pipeline executes as a WDK durable workflow with 6 discrete steps. Each step is independently retryable and persists its output before proceeding.
+
+\begin{longtable}{L{1cm} L{2cm} L{3cm} L{3.5cm} L{2.5cm}}
+\toprule
+\textbf{Step} & \textbf{Name} & \textbf{Input} & \textbf{Output} & \textbf{Service} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Step} & \textbf{Name} & \textbf{Input} & \textbf{Output} & \textbf{Service} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+1 & Ingest & Photo + text description from tenant & Stored image URL + request record in Supabase & Supabase Storage \\
+\midrule
+2 & Diagnose & Image URL + text description & Issue category, severity (1--5), urgency (emergency/routine), description, affected system & Gemini Vision \\
+\midrule
+3 & Find Contractors & Issue category + property location & Ranked list of 5--10 nearby contractors with ratings, hours, distance, phone & Gemini Maps Grounding \\
+\midrule
+4 & Vet Contractors & Contractor names + issue type & Verified reviews, licensing status, estimated cost range for repair type & Gemini Search Grounding \\
+\midrule
+5 & Generate Work Order & Diagnosis + top contractors + property details & Structured work order document (JSON + rendered PDF/Markdown) & Gemini Structured Output \\
+\midrule
+6 & Notify Tenant & Diagnosis summary + ETA + assigned contractor & Audio file URL + text message & ElevenLabs TTS v3 \\
+\end{longtable}
+
+\subsection{Data Flow Diagram}
+
+The following describes the end-to-end data flow from tenant submission to voice notification:
+
+\begin{enumerate}
+    \item Tenant opens the FixFlow web app on their phone and taps ``Report Issue.''
+    \item Tenant captures a photo of the maintenance issue and adds optional text description.
+    \item Frontend uploads the image to Supabase Storage and creates a \texttt{maintenance\_request} record in PostgreSQL.
+    \item A Vercel WDK workflow is triggered via webhook, receiving the request ID.
+    \item \textbf{Step 1 (Diagnose):} The workflow calls Gemini 3.1 Pro with the image and text, requesting structured JSON output via \texttt{generateObject()}.
+    \item \textbf{Step 2 (Find Contractors):} The workflow calls Gemini with Maps grounding enabled, passing the issue category and property address.
+    \item \textbf{Step 3 (Vet Contractors):} The workflow calls Gemini with Search grounding enabled, passing contractor names for review verification and cost estimation.
+    \item \textbf{Step 4 (Generate Work Order):} The workflow calls Gemini with all accumulated context, generating a structured work order.
+    \item \textbf{Step 5 (Notify):} The workflow calls ElevenLabs TTS with a generated status message, stores the audio in Supabase Storage, and updates the request record.
+    \item Supabase Realtime pushes the updated request to the landlord dashboard and tenant status page.
+\end{enumerate}
+
+% ══════════════════════════════════════════════════════════════
+% 4. Functional Requirements
+% ══════════════════════════════════════════════════════════════
+\section{Functional Requirements}
+
+\subsection{FR-001: Maintenance Request Submission}
+
+\textbf{Description:} The system shall allow tenants to submit maintenance requests via a mobile-friendly web form.
+
+\textbf{Inputs:} Photo (required, captured via camera or uploaded), text description (optional, max 500 characters), property unit ID (auto-populated from tenant profile).
+
+\textbf{Outputs:} Confirmation screen with request ID and estimated response time.
+
+\textbf{Business Rules:} Photo must be JPEG, PNG, or WebP, max 10MB. System must validate image contains a recognizable indoor/outdoor scene (reject blank/corrupt images). If no text description is provided, the system proceeds with photo-only diagnosis.
+
+\textbf{Acceptance Criteria:} A tenant can submit a request with one photo tap and one optional text entry in under 15 seconds.
+
+\subsection{FR-002: AI-Powered Issue Diagnosis}
+
+\textbf{Description:} The system shall analyze the submitted photo using Gemini 3.1 Pro's vision capabilities to diagnose the maintenance issue.
+
+\textbf{Structured Output Schema:}
+
+\begin{longtable}{L{3.5cm} L{2.5cm} L{7.5cm}}
+\toprule
+\textbf{Field} & \textbf{Type} & \textbf{Description} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Field} & \textbf{Type} & \textbf{Description} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+category & enum & One of: plumbing, electrical, hvac, structural, appliance, pest, cosmetic, other \\
+\midrule
+severity & integer (1--5) & 1 = cosmetic/minor, 2 = inconvenience, 3 = functional impact, 4 = safety concern, 5 = emergency/danger \\
+\midrule
+urgency & enum & emergency (dispatch immediately) or routine (schedule within 48 hrs) \\
+\midrule
+description & string & Plain-English diagnosis of the issue (2--4 sentences) \\
+\midrule
+affected\_system & string & Specific system affected (e.g., ``kitchen sink drain pipe'', ``bathroom ceiling drywall'') \\
+\midrule
+recommended\_action & string & What the contractor should do (e.g., ``Replace wax ring seal at toilet base'') \\
+\midrule
+tenant\_safety\_note & string | null & Immediate safety instructions if severity $\geq$ 4 (e.g., ``Turn off water supply valve under the sink'') \\
+\midrule
+confidence & float (0--1) & Model confidence in the diagnosis \\
+\end{longtable}
+
+\textbf{Business Rules:} If confidence $<$ 0.6, the system flags the request for manual landlord review and does not auto-dispatch. If severity $\geq$ 4, the system immediately sends an emergency notification to the landlord (SMS/push) in addition to starting the contractor search. The system should combine photo analysis with the tenant's text description for higher accuracy.
+
+\textbf{Acceptance Criteria:} Given a clear photo of a water leak under a sink, the system correctly classifies it as plumbing/severity 3--4/routine-or-emergency within 5 seconds.
+
+\subsection{FR-003: Contractor Discovery}
+
+\textbf{Description:} The system shall find qualified contractors near the property using Gemini's Maps grounding capability.
+
+\textbf{Query Construction:} The system constructs a natural-language query to Gemini with Maps grounding enabled: ``Find licensed [category] contractors within 10 miles of [property address], sorted by rating. Include their name, address, phone number, Google Maps rating, total reviews, and current business hours.''
+
+\textbf{Output Schema:}
+
+\begin{longtable}{L{3cm} L{2cm} L{8.5cm}}
+\toprule
+\textbf{Field} & \textbf{Type} & \textbf{Description} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Field} & \textbf{Type} & \textbf{Description} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+name & string & Contractor business name \\
+\midrule
+address & string & Full street address \\
+\midrule
+phone & string & Phone number \\
+\midrule
+rating & float & Google Maps rating (1.0--5.0) \\
+\midrule
+total\_reviews & integer & Number of Google reviews \\
+\midrule
+distance\_miles & float & Distance from property \\
+\midrule
+hours\_today & string & Today's business hours (e.g., ``8 AM--6 PM'') \\
+\midrule
+is\_open\_now & boolean & Whether currently open \\
+\midrule
+maps\_url & string & Google Maps link \\
+\end{longtable}
+
+\textbf{Business Rules:} Return top 5 contractors minimum, up to 10. Prioritize contractors that are currently open for emergency requests. Filter out contractors with ratings below 3.5. For emergency requests, expand search radius to 25 miles if fewer than 3 results.
+
+\textbf{Acceptance Criteria:} Given a plumbing issue at a Brooklyn address, the system returns 5+ licensed plumbers within 10 miles, each with valid Google Maps data, within 8 seconds.
+
+\subsection{FR-004: Contractor Vetting}
+
+\textbf{Description:} The system shall use Gemini's Search grounding to verify contractor reputation and estimate repair costs.
+
+\textbf{Per-Contractor Verification:} For each of the top 3 contractors from FR-003, the system queries Search grounding: ``Search for reviews, complaints, and licensing status for [contractor name] in [city, state]. Also find typical cost range for [recommended\_action] in [city].''
+
+\textbf{Output Schema:}
+
+\begin{longtable}{L{3.5cm} L{2cm} L{8cm}}
+\toprule
+\textbf{Field} & \textbf{Type} & \textbf{Description} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Field} & \textbf{Type} & \textbf{Description} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+contractor\_name & string & Name of the contractor being vetted \\
+\midrule
+review\_summary & string & 2--3 sentence summary of online reviews (Yelp, BBB, etc.) \\
+\midrule
+red\_flags & string[] & Any complaints, lawsuits, or licensing issues found \\
+\midrule
+estimated\_cost\_low & integer & Low end of typical cost for this repair type in this market \\
+\midrule
+estimated\_cost\_high & integer & High end of typical cost \\
+\midrule
+sources & string[] & URLs of sources used for grounding \\
+\end{longtable}
+
+\textbf{Business Rules:} Contractors with any red flags are deprioritized but not removed (the landlord makes the final decision). Cost estimates are presented as ranges, never exact figures. All Search results include source citations for transparency.
+
+\subsection{FR-005: Work Order Generation}
+
+\textbf{Description:} The system shall generate a structured work order combining diagnosis, contractor recommendation, and property details.
+
+\textbf{Work Order Contents:}
+
+\begin{itemize}
+    \item Request ID, timestamp, property address, unit number
+    \item Tenant name and contact information
+    \item AI diagnosis: category, severity, urgency, description, recommended action
+    \item Tenant-submitted photo (embedded or linked)
+    \item Recommended contractor: name, phone, rating, estimated cost range
+    \item Alternative contractors: names and phone numbers
+    \item Landlord approval status: auto-approved (cost $<$ \$500) or pending approval
+\end{itemize}
+
+\textbf{Business Rules:} Work orders under \$500 estimated cost are auto-approved and dispatched. Work orders over \$500 require explicit landlord approval via the dashboard. Emergency requests bypass cost approval.
+
+\subsection{FR-006: Voice-Based Tenant Notification}
+
+\textbf{Description:} The system shall generate and deliver a voice-based status update to the tenant using ElevenLabs TTS.
+
+\textbf{Voice Message Template:} ``Hi [tenant name], we've received your maintenance request for [unit]. Our system has identified the issue as [description]. A licensed [category] contractor, [contractor name], has been notified and will contact you within [ETA] to schedule a visit. The estimated cost range is \$[low]--\$[high]. If this is an emergency, please call [landlord phone] directly.''
+
+\textbf{Technical Requirements:}
+
+\begin{itemize}
+    \item Voice model: ElevenLabs v3 with ``friendly, professional'' style tag
+    \item Latency target: Audio generation within 3 seconds of work order completion
+    \item Audio format: MP3, 128kbps, stored in Supabase Storage
+    \item Delivery: Embedded audio player on tenant's status page + optional download link
+\end{itemize}
+
+\subsection{FR-007: Landlord Dashboard}
+
+\textbf{Description:} The system shall provide a real-time dashboard for landlords to monitor all maintenance requests.
+
+\textbf{Dashboard Components:}
+
+\begin{itemize}
+    \item Active requests list with status indicators (new, diagnosed, dispatched, in-progress, resolved)
+    \item Request detail view: photo, AI diagnosis, contractor recommendation, work order, tenant voice update
+    \item Approve/reject buttons for work orders above \$500
+    \item Cost summary: total spend this month, average per request, budget vs.\ actual
+    \item Property overview: all units, request history per unit, recurring issues flagged
+\end{itemize}
+
+\textbf{Real-Time Updates:} The dashboard uses Supabase Realtime (PostgreSQL change subscriptions) to update without page refresh when new requests arrive or statuses change.
+
+% ══════════════════════════════════════════════════════════════
+% 5. Non-Functional Requirements
+% ══════════════════════════════════════════════════════════════
+\section{Non-Functional Requirements}
+
+\begin{longtable}{L{1.5cm} L{2.5cm} L{5.5cm} L{3.5cm}}
+\toprule
+\textbf{ID} & \textbf{Category} & \textbf{Requirement} & \textbf{Target} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{ID} & \textbf{Category} & \textbf{Requirement} & \textbf{Target} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+NFR-001 & Performance & End-to-end pipeline (photo submission to voice notification) & $<$ 30 seconds \\
+\midrule
+NFR-002 & Performance & Gemini Vision diagnosis response time & $<$ 5 seconds \\
+\midrule
+NFR-003 & Performance & Maps grounding contractor search response time & $<$ 8 seconds \\
+\midrule
+NFR-004 & Performance & ElevenLabs TTS generation time & $<$ 3 seconds \\
+\midrule
+NFR-005 & Reliability & WDK workflow step retry on transient failure & 3 retries with exponential backoff \\
+\midrule
+NFR-006 & Reliability & System uptime during hackathon demo & 100\% (pre-warm all services) \\
+\midrule
+NFR-007 & Scalability & Concurrent maintenance requests (hackathon scope) & 10 simultaneous \\
+\midrule
+NFR-008 & Security & Tenant data isolation (multi-tenant) & Row-level security via Supabase RLS \\
+\midrule
+NFR-009 & Security & Authentication & Clerk OAuth 2.0 with role-based access \\
+\midrule
+NFR-010 & Security & Image storage & Private Supabase Storage buckets, signed URLs \\
+\midrule
+NFR-011 & Usability & Tenant submission flow (photo to confirmation) & $<$ 15 seconds, 2 taps maximum \\
+\midrule
+NFR-012 & Usability & Mobile responsiveness & Full functionality on 375px+ screens \\
+\midrule
+NFR-013 & Monitoring & AI pipeline observability & Sentry AI Monitoring with \texttt{vercelAIIntegration()} \\
+\midrule
+NFR-014 & Accessibility & WCAG 2.1 AA compliance & Core flows (submission, dashboard) must meet AA \\
+\end{longtable}
+
+% ══════════════════════════════════════════════════════════════
+% 6. External Interface Requirements
+% ══════════════════════════════════════════════════════════════
+\section{External Interface Requirements}
+
+\subsection{Gemini 3.1 Pro API}
+
+\textbf{Provider:} Google AI Studio (temporary hackathon account)
+
+\textbf{Model:} \texttt{gemini-3.1-pro}
+
+\textbf{Capabilities Used:} Vision (image input), Maps grounding, Search grounding, structured output (JSON mode), thinking mode
+
+\textbf{SDK:} Vercel AI SDK (\texttt{@ai-sdk/google} provider)
+
+\textbf{Rate Limits:} Elevated quota via hackathon account (exact limits TBD day-of)
+
+\subsection{ElevenLabs API}
+
+\textbf{Tier:} Creator (1-month provided by hackathon, \$22/month value)
+
+\textbf{Endpoints Used:} Text-to-Speech v3 (\texttt{/v1/text-to-speech/\{voice\_id\}})
+
+\textbf{Voice Model:} \texttt{eleven\_v3} with style tags for ``friendly, professional'' tone
+
+\textbf{Latency Target:} $<$ 3 seconds for 50-word messages
+
+\textbf{Output Format:} MP3, 128kbps
+
+\subsection{Supabase}
+
+\textbf{Database:} PostgreSQL 15 with Row Level Security (RLS)
+
+\textbf{Storage:} Private bucket for maintenance photos, public bucket for generated audio
+
+\textbf{Realtime:} PostgreSQL change subscriptions for dashboard live updates
+
+\textbf{Auth:} Integrated with Clerk via Supabase Auth middleware
+
+\subsection{Clerk}
+
+\textbf{Integration:} Next.js middleware (\texttt{@clerk/nextjs})
+
+\textbf{Roles:} \texttt{tenant}, \texttt{landlord} (stored in Clerk metadata, synced to Supabase RLS policies)
+
+\textbf{Auth Flow:} Email/password or Google OAuth for hackathon demo
+
+\subsection{Sentry}
+
+\textbf{Integration:} \texttt{@sentry/nextjs} with \texttt{vercelAIIntegration()}
+
+\textbf{Monitoring:} Error tracking, performance monitoring, AI pipeline tracing (tool calls, latency, token usage)
+
+% ══════════════════════════════════════════════════════════════
+% 7. Data Model
+% ══════════════════════════════════════════════════════════════
+\section{Data Model}
+
+\subsection{Database Schema}
+
+All tables are created in Supabase PostgreSQL with Row Level Security policies.
+
+\subsubsection{properties}
+
+\begin{longtable}{L{2.5cm} L{2.5cm} L{3.5cm} L{4.5cm}}
+\toprule
+\textbf{Column} & \textbf{Type} & \textbf{Constraints} & \textbf{Description} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Column} & \textbf{Type} & \textbf{Constraints} & \textbf{Description} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+id & uuid & PK, default \texttt{gen\_random\_uuid()} & Unique property identifier \\
+\midrule
+landlord\_id & text & NOT NULL, FK $\rightarrow$ clerk\_user\_id & Clerk user ID of the landlord \\
+\midrule
+address & text & NOT NULL & Full street address \\
+\midrule
+city & text & NOT NULL & City name \\
+\midrule
+state & text & NOT NULL & State abbreviation \\
+\midrule
+zip & text & NOT NULL & ZIP code \\
+\midrule
+unit\_count & integer & DEFAULT 1 & Number of units in the property \\
+\midrule
+created\_at & timestamptz & DEFAULT \texttt{now()} & Record creation timestamp \\
+\end{longtable}
+
+\subsubsection{units}
+
+\begin{longtable}{L{2.5cm} L{2.5cm} L{3.5cm} L{4.5cm}}
+\toprule
+\textbf{Column} & \textbf{Type} & \textbf{Constraints} & \textbf{Description} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Column} & \textbf{Type} & \textbf{Constraints} & \textbf{Description} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+id & uuid & PK & Unique unit identifier \\
+\midrule
+property\_id & uuid & FK $\rightarrow$ properties.id & Parent property \\
+\midrule
+unit\_label & text & NOT NULL & Unit number or name (e.g., ``Apt 3B'') \\
+\midrule
+tenant\_id & text & NULLABLE & Clerk user ID of current tenant \\
+\midrule
+tenant\_name & text & NULLABLE & Tenant display name \\
+\midrule
+tenant\_phone & text & NULLABLE & Tenant phone number \\
+\end{longtable}
+
+\subsubsection{maintenance\_requests}
+
+\begin{longtable}{L{3cm} L{2cm} L{3cm} L{5cm}}
+\toprule
+\textbf{Column} & \textbf{Type} & \textbf{Constraints} & \textbf{Description} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Column} & \textbf{Type} & \textbf{Constraints} & \textbf{Description} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+id & uuid & PK & Unique request identifier \\
+\midrule
+unit\_id & uuid & FK $\rightarrow$ units.id & Unit where the issue was reported \\
+\midrule
+tenant\_id & text & NOT NULL & Clerk user ID of the reporting tenant \\
+\midrule
+photo\_url & text & NOT NULL & Supabase Storage URL of the submitted photo \\
+\midrule
+description & text & NULLABLE & Tenant-provided text description \\
+\midrule
+status & enum & DEFAULT `submitted' & submitted, diagnosed, dispatched, in\_progress, resolved, cancelled \\
+\midrule
+diagnosis & jsonb & NULLABLE & Full Gemini diagnosis output (FR-002 schema) \\
+\midrule
+contractors & jsonb & NULLABLE & Array of discovered contractors (FR-003 schema) \\
+\midrule
+vetting & jsonb & NULLABLE & Vetting results for top contractors (FR-004 schema) \\
+\midrule
+work\_order & jsonb & NULLABLE & Generated work order (FR-005) \\
+\midrule
+voice\_update\_url & text & NULLABLE & ElevenLabs audio file URL \\
+\midrule
+assigned\_contractor & jsonb & NULLABLE & Selected contractor details \\
+\midrule
+estimated\_cost\_low & integer & NULLABLE & Low estimate in dollars \\
+\midrule
+estimated\_cost\_high & integer & NULLABLE & High estimate in dollars \\
+\midrule
+landlord\_approved & boolean & DEFAULT false & Whether landlord approved (auto-true if $<$ \$500) \\
+\midrule
+created\_at & timestamptz & DEFAULT \texttt{now()} & Submission timestamp \\
+\midrule
+updated\_at & timestamptz & DEFAULT \texttt{now()} & Last update timestamp \\
+\end{longtable}
+
+\subsection{Row Level Security Policies}
+
+\begin{itemize}
+    \item Tenants can only read/create \texttt{maintenance\_requests} for their own \texttt{unit\_id}
+    \item Landlords can read all \texttt{maintenance\_requests} for properties they own
+    \item Landlords can update the \texttt{landlord\_approved} and \texttt{status} fields
+    \item Service role (used by WDK workflows) has full access for agent operations
+\end{itemize}
+
+% ══════════════════════════════════════════════════════════════
+% 8. Technical Stack & API Specifications
+% ══════════════════════════════════════════════════════════════
+\section{Technical Stack \& API Specifications}
+
+\subsection{Complete Technology Stack}
+
+\begin{longtable}{L{2cm} L{3cm} L{2.5cm} L{5.5cm}}
+\toprule
+\textbf{Layer} & \textbf{Technology} & \textbf{Version} & \textbf{Purpose} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Layer} & \textbf{Technology} & \textbf{Version} & \textbf{Purpose} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+Framework & Next.js (App Router) & 14.x & Full-stack React framework with server components \\
+\midrule
+Language & TypeScript & 5.x & Type safety across frontend and backend \\
+\midrule
+Styling & Tailwind CSS & 3.x & Utility-first CSS framework \\
+\midrule
+AI SDK & Vercel AI SDK & 5.x & Gemini integration, streaming, structured output, tool use \\
+\midrule
+LLM & Gemini 3.1 Pro & \texttt{gemini-3.1-pro} & Vision, Maps grounding, Search grounding, thinking \\
+\midrule
+Voice & ElevenLabs & v3 TTS & Tenant notification audio generation \\
+\midrule
+Database & Supabase & Latest & PostgreSQL, Storage, Realtime, Auth \\
+\midrule
+Auth & Clerk & Latest & Authentication, role-based access, Next.js middleware \\
+\midrule
+Workflow & Vercel WDK & Beta & Durable multi-step agent workflows \\
+\midrule
+Monitoring & Sentry & Latest & Error tracking, AI pipeline observability \\
+\midrule
+Deployment & Vercel & Latest & Serverless functions, edge network, preview deploys \\
+\end{longtable}
+
+\subsection{Key API Endpoints}
+
+\begin{longtable}{L{1.5cm} L{4cm} L{5cm} L{2.5cm}}
+\toprule
+\textbf{Method} & \textbf{Endpoint} & \textbf{Description} & \textbf{Auth} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Method} & \textbf{Endpoint} & \textbf{Description} & \textbf{Auth} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+POST & \texttt{/api/requests} & Submit new maintenance request (photo + text) & Tenant \\
+\midrule
+GET & \texttt{/api/requests/[id]} & Get request details including diagnosis, contractors, work order & Tenant (own) / Landlord \\
+\midrule
+PATCH & \texttt{/api/requests/[id]/approve} & Landlord approves work order for dispatch & Landlord \\
+\midrule
+GET & \texttt{/api/dashboard} & Get all active requests for landlord's properties & Landlord \\
+\midrule
+POST & \texttt{/api/workflows/diagnose} & WDK webhook: triggers the 6-step agent pipeline & Service (internal) \\
+\midrule
+GET & \texttt{/api/requests/[id]/audio} & Retrieve generated voice update audio file & Tenant (own) / Landlord \\
+\end{longtable}
+
+% ══════════════════════════════════════════════════════════════
+% 9. Agent Pipeline Specification
+% ══════════════════════════════════════════════════════════════
+\section{Agent Pipeline Specification}
+
+\subsection{Gemini Prompt Architecture}
+
+Each pipeline step uses a dedicated Gemini call with specific system prompts, tool configurations, and output schemas. The prompts are designed for reliability and consistency under hackathon conditions.
+
+\subsubsection{Step 2: Diagnosis Prompt}
+
+\textbf{System Prompt:} ``You are a property maintenance diagnostic agent. Analyze the provided photo and optional text description to diagnose the maintenance issue. Be specific about the affected system, severity, and recommended action. If you cannot determine the issue from the photo, set confidence below 0.6 and describe what you see.''
+
+\textbf{API Configuration:} model: \texttt{gemini-3.1-pro}, tools: none, output: \texttt{generateObject()} with Zod schema matching FR-002 output
+
+\subsubsection{Step 3: Contractor Discovery Prompt}
+
+\textbf{System Prompt:} ``You are a contractor search agent. Find qualified contractors for the specified repair type near the given address. Return only contractors relevant to the issue category. Prioritize currently-open businesses for emergency requests.''
+
+\textbf{API Configuration:} model: \texttt{gemini-3.1-pro}, tools: \texttt{[google\_maps\_grounding]}, output: \texttt{generateObject()} with Zod array schema matching FR-003
+
+\subsubsection{Step 4: Contractor Vetting Prompt}
+
+\textbf{System Prompt:} ``You are a contractor vetting agent. For each contractor provided, search for online reviews, complaints, licensing information, and typical pricing for the specified repair type in the specified city. Report findings factually with source URLs. Flag any red flags.''
+
+\textbf{API Configuration:} model: \texttt{gemini-3.1-pro}, tools: \texttt{[google\_search\_grounding]}, output: \texttt{generateObject()} with Zod schema matching FR-004
+
+\subsection{WDK Workflow Implementation}
+
+The workflow is implemented as a single WDK workflow file exported from \texttt{/app/api/workflows/diagnose/route.ts}. Each step uses the ``use step'' pattern for durability:
+
+\begin{itemize}
+    \item \textbf{Step 1 (Ingest):} Validates and stores the image, creates the DB record
+    \item \textbf{Step 2 (Diagnose):} Calls Gemini Vision, writes diagnosis to DB, checks confidence threshold
+    \item \textbf{Step 3 (Find):} Calls Gemini Maps Grounding, writes contractor list to DB
+    \item \textbf{Step 4 (Vet):} Calls Gemini Search Grounding for top 3 contractors, writes vetting to DB
+    \item \textbf{Step 5 (Work Order):} Synthesizes all prior outputs into a work order, checks cost threshold for auto-approval
+    \item \textbf{Step 6 (Notify):} Generates ElevenLabs audio, stores it, updates request status to ``dispatched''
+\end{itemize}
+
+Each step persists its output to Supabase before proceeding. If any step fails, WDK retries it with the saved state from the previous successful step. The workflow can be manually re-triggered from the landlord dashboard.
+
+% ══════════════════════════════════════════════════════════════
+% 10. Hackathon Demo Strategy
+% ══════════════════════════════════════════════════════════════
+\section{Hackathon Demo Strategy}
+
+\subsection{Demo Script (3 Minutes)}
+
+\begin{longtable}{L{2cm} L{3cm} L{8.5cm}}
+\toprule
+\textbf{Time} & \textbf{Action} & \textbf{What the Audience Sees} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Time} & \textbf{Action} & \textbf{What the Audience Sees} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+0:00--0:15 & Problem statement & ``10 million small landlords in the US coordinate maintenance via text messages. Reactive repairs cost 3--5$\times$ more than preventive. FixFlow changes that.'' \\
+\midrule
+0:15--0:30 & Show tenant's phone view & Clean, mobile-first submission form. Take/upload a photo of a water-stained ceiling. \\
+\midrule
+0:30--1:00 & Live diagnosis & AI diagnosis card appears: ``Plumbing --- Water damage from likely pipe failure above, Severity: 4/5, Urgency: EMERGENCY.'' Safety note displays. \\
+\midrule
+1:00--1:30 & Contractor discovery & Interactive map populates with 5+ plumbers near the property. Ratings, distance, hours shown. Top 3 get vetting cards with cost estimates. \\
+\midrule
+1:30--2:00 & Work order + voice & Work order auto-generates. Voice plays: ``Hi Sarah, we've identified a plumbing emergency\ldots'' Audience hears the professional AI voice. \\
+\midrule
+2:00--2:30 & Landlord dashboard & Switch to landlord view. Real-time dashboard shows the new request with diagnosis, contractor, and cost. Approve button for high-cost repairs. \\
+\midrule
+2:30--3:00 & Vision + closing & ``Every feature you saw was built today. Gemini sees the photo, Maps finds contractors, Search vets them, ElevenLabs calls the tenant. One photo, full dispatch.'' \\
+\end{longtable}
+
+\subsection{Demo Preparation Checklist}
+
+\begin{itemize}
+    \item Pre-seed Supabase with 2 properties, 4 units, and 2 tenant accounts
+    \item Pre-warm Gemini API with a test request 5 minutes before demo
+    \item Have 3 maintenance photos ready: water-stained ceiling (plumbing), sparking outlet (electrical), broken window (structural)
+    \item Pre-record a backup video of the full pipeline in case of API failure
+    \item Test ElevenLabs voice generation and audio playback in the demo venue
+    \item Have landlord dashboard open in a second browser tab, ready to switch
+    \item Disable Clerk login for demo (pre-authenticated session cookies)
+\end{itemize}
+
+% ══════════════════════════════════════════════════════════════
+% 11. Build Timeline & Task Division
+% ══════════════════════════════════════════════════════════════
+\section{Build Timeline \& Task Division}
+
+\subsection{Hour-by-Hour Build Plan}
+
+\emph{(Content to be filled in by the team.)}
+
+\subsection{Minimum Viable Demo (If Behind Schedule)}
+
+If running behind, the team cuts to the following MVP by hour 5:
+
+\begin{itemize}
+    \item Core pipeline only: photo upload $\rightarrow$ Gemini diagnosis $\rightarrow$ Maps contractor search $\rightarrow$ work order display
+    \item Skip: Search grounding vetting, ElevenLabs voice, WDK durability, Clerk auth, Sentry
+    \item Use pre-seeded data instead of real-time Supabase writes
+    \item This MVP still demonstrates vision + Maps grounding + structured output in a compelling flow
+\end{itemize}
+
+% ══════════════════════════════════════════════════════════════
+% 12. Risk Analysis & Mitigation
+% ══════════════════════════════════════════════════════════════
+\section{Risk Analysis \& Mitigation}
+
+\begin{longtable}{L{3cm} L{2cm} L{1.5cm} L{6.5cm}}
+\toprule
+\textbf{Risk} & \textbf{Likelihood} & \textbf{Impact} & \textbf{Mitigation} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Risk} & \textbf{Likelihood} & \textbf{Impact} & \textbf{Mitigation} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+Gemini API rate limit hit during demo & Medium & Critical & Pre-warm API, cache previous results, have backup video of full pipeline \\
+\midrule
+Maps grounding returns no contractors for demo address & Low & High & Pre-test with 3 different NYC/Brooklyn addresses, select the one with best results \\
+\midrule
+ElevenLabs latency $>$ 5 seconds & Medium & Medium & Pre-generate voice clips for demo scenarios, play cached audio if live generation is slow \\
+\midrule
+Gemini vision misdiagnoses the photo & Low & Medium & Use high-quality, unambiguous photos for demo. Have 3 backup photos per category. \\
+\midrule
+Wi-Fi instability at venue & Medium & Critical & Pre-deploy everything to Vercel (not localhost). Test on venue Wi-Fi during setup. Mobile hotspot as backup. \\
+\midrule
+Supabase free tier rate limits & Low & Medium & Use \$25 hackathon credits to upgrade. Pre-seed data to minimize writes during demo. \\
+\midrule
+Build falls behind schedule & Medium & High & Follow MVP cutline in Section 11.2. Core pipeline (photo $\rightarrow$ diagnosis $\rightarrow$ map) is achievable in 4 hours. \\
+\midrule
+Clerk auth adds friction to demo flow & Medium & Low & Pre-authenticate demo accounts. Use session cookies. Skip login flow in presentation. \\
+\end{longtable}
+
+\vspace{1cm}
+\begin{center}
+    \textit{End of Document}
+\end{center}
+
+\end{document}

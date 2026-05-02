@@ -1,0 +1,1339 @@
+\documentclass[11pt, a4paper]{article}
+
+% ── Packages ──
+\usepackage[margin=1in]{geometry}
+\usepackage{xcolor}
+\usepackage{titlesec}
+\usepackage{enumitem}
+\usepackage{tabularx}
+\usepackage{booktabs}
+\usepackage{colortbl}
+\usepackage{fancyhdr}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{fontenc}
+\usepackage{tcolorbox}
+\usepackage{multirow}
+\usepackage{array}
+\usepackage{listings}
+\usepackage{lastpage}
+\usepackage{ragged2e}
+
+\tcbuselibrary{skins, breakable}
+
+% ── Colors ──
+\definecolor{primary}{HTML}{1B4F72}
+\definecolor{accent}{HTML}{2E86C1}
+\definecolor{darkgray}{HTML}{2C3E50}
+\definecolor{lightblue}{HTML}{D6EAF8}
+\definecolor{lightteal}{HTML}{D1F2EB}
+\definecolor{lightpurple}{HTML}{E8DAEF}
+\definecolor{lightgray}{HTML}{F2F4F4}
+\definecolor{medblue}{HTML}{2980B9}
+\definecolor{medteal}{HTML}{1ABC9C}
+\definecolor{medpurple}{HTML}{8E44AD}
+\definecolor{critred}{HTML}{E74C3C}
+\definecolor{highamber}{HTML}{F39C12}
+\definecolor{medgreen}{HTML}{27AE60}
+\definecolor{bordergray}{HTML}{BDC3C7}
+\definecolor{textmuted}{HTML}{7F8C8D}
+\definecolor{warningbg}{HTML}{FEF9E7}
+\definecolor{warningborder}{HTML}{F1C40F}
+\definecolor{infobg}{HTML}{EBF5FB}
+\definecolor{infoborder}{HTML}{3498DB}
+\definecolor{successbg}{HTML}{EAFAF1}
+\definecolor{successborder}{HTML}{27AE60}
+\definecolor{codebg}{HTML}{F8F9FA}
+\definecolor{codeframe}{HTML}{DEE2E6}
+\definecolor{dangerbg}{HTML}{FDEDEC}
+\definecolor{dangerborder}{HTML}{E74C3C}
+
+% ── Hyperref ──
+\hypersetup{
+  colorlinks=true,
+  linkcolor=accent,
+  urlcolor=accent,
+  pdftitle={FixFlow Phase 3: Integration and Workflow - Task Breakdown},
+  pdfauthor={Varun Bhandari, Vraj Patel}
+}
+
+% ── Code listings ──
+\lstset{
+  basicstyle=\small\ttfamily,
+  backgroundcolor=\color{codebg},
+  frame=single,
+  rulecolor=\color{codeframe},
+  breaklines=true,
+  breakatwhitespace=true,
+  tabsize=2,
+  showstringspaces=false,
+  xleftmargin=4pt,
+  xrightmargin=4pt,
+  aboveskip=6pt,
+  belowskip=6pt,
+  framesep=4pt,
+}
+
+% ── Section formatting ──
+\titleformat{\section}
+  {\Large\bfseries\color{primary}}
+  {\thesection}{1em}{}
+  [\vspace{-0.5em}\textcolor{accent}{\rule{\textwidth}{1.5pt}}]
+
+\titleformat{\subsection}
+  {\large\bfseries\color{darkgray}}
+  {\thesubsection}{0.8em}{}
+
+\titleformat{\subsubsection}
+  {\normalsize\bfseries\color{accent}}
+  {\thesubsubsection}{0.6em}{}
+
+% ── Header/Footer ──
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small\textcolor{textmuted}{\textit{FixFlow --- Phase 3: Integration \& Workflow}}}
+\fancyhead[R]{\small\textcolor{textmuted}{\textit{Zero to Agent Hackathon NYC}}}
+\fancyfoot[C]{\small\textcolor{textmuted}{Page \thepage\ of \pageref{LastPage}}}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0.4pt}
+
+% ── Custom tcolorbox styles ──
+\newtcolorbox{milestonebox}{
+  enhanced, breakable,
+  colback=infobg, colframe=infoborder,
+  boxrule=0.8pt, arc=3pt,
+  left=8pt, right=8pt, top=5pt, bottom=5pt,
+}
+
+\newtcolorbox{warningbox}{
+  enhanced,
+  colback=warningbg, colframe=warningborder,
+  boxrule=0.8pt, arc=3pt,
+  left=8pt, right=8pt, top=5pt, bottom=5pt,
+}
+
+\newtcolorbox{syncbox}{
+  enhanced, breakable,
+  colback=lightteal, colframe=medteal,
+  boxrule=0.8pt, arc=4pt,
+  left=10pt, right=10pt, top=6pt, bottom=6pt,
+}
+
+\newtcolorbox{successbox}{
+  enhanced,
+  colback=successbg, colframe=successborder,
+  boxrule=0.8pt, arc=3pt,
+  left=8pt, right=8pt, top=5pt, bottom=5pt,
+}
+
+\newtcolorbox{dangerbox}{
+  enhanced,
+  colback=dangerbg, colframe=dangerborder,
+  boxrule=0.8pt, arc=3pt,
+  left=8pt, right=8pt, top=5pt, bottom=5pt,
+}
+
+\newtcolorbox{codebox}{
+  enhanced, breakable,
+  colback=codebg, colframe=codeframe,
+  boxrule=0.5pt, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  fontupper=\small\ttfamily,
+}
+
+% ── Priority badge command ──
+\newcommand{\critical}{\textcolor{critred}{\rule{6pt}{6pt}}~\textcolor{critred}{\scriptsize\textbf{CRITICAL PATH}}}
+\newcommand{\highpri}{\textcolor{highamber}{\rule{6pt}{6pt}}~\textcolor{highamber}{\scriptsize\textbf{HIGH}}}
+\newcommand{\medpri}{\textcolor{medgreen}{\rule{6pt}{6pt}}~\textcolor{medgreen}{\scriptsize\textbf{MEDIUM}}}
+
+% ── Code command ──
+\newcommand{\code}[1]{\texttt{\small\colorbox{lightgray}{#1}}}
+
+% ── Document ──
+\begin{document}
+
+% ════════════════════════════════════════
+% TITLE PAGE
+% ════════════════════════════════════════
+\begin{titlepage}
+\centering
+\vspace*{2cm}
+
+{\Huge\bfseries\textcolor{primary}{Phase 3: Integration \& Workflow}}\\[0.6cm]
+{\LARGE\textcolor{accent}{Detailed Task Breakdown}}\\[0.3cm]
+\textcolor{accent}{\rule{0.6\textwidth}{1.5pt}}\\[1cm]
+
+{\Large\textcolor{darkgray}{FixFlow --- AI-Powered Property Maintenance Agent}}\\[0.5cm]
+{\large\textcolor{textmuted}{Zero to Agent: Vercel $\times$ DeepMind Hackathon NYC}}\\[2cm]
+
+\begin{tabular}{rl}
+\textcolor{textmuted}{Duration:} & \textbf{1:00 PM -- 2:30 PM EDT (90 minutes)} \\[6pt]
+\textcolor{textmuted}{Team:} & \textbf{3 developers working in parallel} \\[6pt]
+\textcolor{textmuted}{Goal:} & \textbf{One photo triggers the entire pipeline end-to-end} \\[6pt]
+\textcolor{textmuted}{Prerequisite:} & \textbf{Phase 2 complete (all AI routes working independently)} \\[6pt]
+\textcolor{textmuted}{Date:} & \textbf{March 21, 2026} \\[6pt]
+\textcolor{textmuted}{Version:} & \textbf{1.0} \\
+\end{tabular}
+
+\vfill
+
+{\normalsize\textcolor{textmuted}{Prepared by}}\\[4pt]
+{\large\textbf{Varun Bhandari \quad\&\quad Vraj Patel}}\\[2pt]
+{\small\textcolor{textmuted}{Stony Brook University --- M.S. Computer Science}}
+
+\end{titlepage}
+
+% ════════════════════════════════════════
+% PHASE OVERVIEW
+% ════════════════════════════════════════
+\section{Phase Overview}
+
+Phase 3 is the \textbf{integration phase}. In Phase 2, each AI capability was built and tested independently. Now, those capabilities get wired into a single seamless pipeline and wrapped in a landlord-facing dashboard. The goal is simple: \textbf{one photo submission triggers the entire chain --- diagnosis, contractor search, vetting, work order, voice notification --- automatically}, and the landlord sees everything on a real-time dashboard.
+
+\subsection{Phase 3 Objectives}
+
+\begin{enumerate}[leftmargin=2em, itemsep=3pt]
+  \item \textbf{Person 1:} Polish the tenant-facing request detail page into a seamless, progressive experience --- results stream in section by section as the pipeline runs. Fix any UI bugs discovered during Phase 2 testing.
+  \item \textbf{Person 2:} Upgrade the Phase 2 sequential orchestrator into a WDK durable workflow that is retryable, observable, and production-grade. If WDK proves too complex, harden the sequential fallback instead.
+  \item \textbf{Person 3:} Build the entire landlord dashboard --- the second screen of the demo. Real-time request list, detail view, approve/reject buttons, cost tracking.
+\end{enumerate}
+
+\subsection{Entry Conditions from Phase 2}
+
+Before starting Phase 3, confirm these Phase 2 deliverables exist and work:
+
+\begin{tabularx}{\textwidth}{|l|c|X|}
+\hline
+\rowcolor{primary}
+\textcolor{white}{\textbf{Deliverable}} & \textcolor{white}{\textbf{Owner}} & \textcolor{white}{\textbf{Status Check}} \\
+\hline
+Photo submission form & P1 & Tenant can upload photo, it appears in Supabase Storage \\
+\hline
+\code{/api/diagnose} route & P2 & Returns structured diagnosis from Gemini Vision \\
+\hline
+\code{/api/contractors} route & P2 & Returns 5+ contractors via Maps grounding \\
+\hline
+Sequential orchestrator & P2 & Chains diagnose $\rightarrow$ contractors (at minimum) \\
+\hline
+\code{/api/vet} route & P3 & Returns vetting results via Search grounding \\
+\hline
+\code{/api/work-order} route & P3 & Generates work order with auto-approval logic \\
+\hline
+\code{/api/notify} route & P3 & Generates ElevenLabs audio and stores it \\
+\hline
+DiagnosisCard component & P1 & Renders diagnosis with Realtime subscription \\
+\hline
+ContractorMap + cards & P1 & Renders map and contractor list \\
+\hline
+VoiceUpdate player & P1 & Plays audio when URL appears in DB \\
+\hline
+\end{tabularx}
+
+\begin{dangerbox}
+\textbf{If any critical deliverable is missing:} Do NOT start Phase 3 tasks. Instead, the person who owns the missing deliverable finishes it, while the other two begin their Phase 3 work. The 1:00 PM sync decision matrix from the Phase 2 document governs this.
+\end{dangerbox}
+
+\subsection{Priority Legend}
+
+\begin{tabularx}{\textwidth}{lX}
+\critical & The demo cannot function without this. \\[4pt]
+\highpri & Significantly improves demo quality. Has a fallback. \\[4pt]
+\medpri & Nice-to-have polish. Cut first if behind schedule. \\
+\end{tabularx}
+
+\newpage
+
+% ════════════════════════════════════════
+% PERSON 1 --- FRONTEND INTEGRATION
+% ════════════════════════════════════════
+\section{Person 1 --- Frontend Lead}
+\begin{center}
+\textcolor{medblue}{\large\textbf{Progressive Results Page + Real-Time Status Flow + UI Fixes}}\\[2pt]
+\textcolor{textmuted}{\small Total estimated time: 85--90 minutes}
+\end{center}
+
+\vspace{0.5em}
+
+Person 1's Phase 3 mission: make the tenant request detail page feel \textit{magical}. Right now, each section (diagnosis, contractors, vetting, voice) appears when its DB column updates. The job is to make this progressive loading feel intentional and polished --- not like pieces loading randomly.
+
+\vspace{0.5em}
+
+% Task 1.1
+\subsection{Task 3.1.1: Build Progressive Pipeline Status Bar}
+
+\begin{tabularx}{\textwidth}{lX}
+\textbf{Priority:} & \critical \\
+\textbf{Time:} & 25 minutes (1:00 -- 1:25) \\
+\textbf{Depends on:} & Phase 2 complete \\
+\textbf{Blocks:} & Demo flow (judges need to see the pipeline progressing) \\
+\end{tabularx}
+
+\vspace{0.3em}
+
+\textbf{File:} \code{src/components/PipelineStatus.tsx}
+
+\textbf{Concept:} A horizontal step indicator at the top of the request detail page that shows where the pipeline currently is. Each step lights up as the corresponding DB column populates.
+
+\textbf{Steps:}
+\begin{enumerate}[leftmargin=2em, itemsep=2pt]
+  \item Create a 5-step horizontal progress bar component:
+    \begin{itemize}[itemsep=1pt]
+      \item Step 1: \textbf{Submitted} --- always complete (green checkmark)
+      \item Step 2: \textbf{Diagnosing} --- active while \code{diagnosis} is null, complete when populated
+      \item Step 3: \textbf{Finding contractors} --- active while \code{contractors} is null
+      \item Step 4: \textbf{Verifying \& quoting} --- active while \code{vetting} is null
+      \item Step 5: \textbf{Ready} --- complete when \code{voice\_update\_url} is populated
+    \end{itemize}
+
+  \item Visual design for each step state:
+    \begin{itemize}[itemsep=1pt]
+      \item \textbf{Complete:} Filled green circle with checkmark, green connecting line
+      \item \textbf{Active:} Pulsing blue circle with animated spinner, blue text label
+      \item \textbf{Pending:} Gray hollow circle, gray text label
+    \end{itemize}
+
+  \item Wire the component to the Supabase Realtime subscription:
+    \begin{itemize}[itemsep=1pt]
+      \item Subscribe to the specific request row using \code{supabase.channel('request-\{id\}')}
+      \item On each UPDATE event, check which columns are now non-null
+      \item Transition the step indicator with a smooth CSS animation (scale + color fade)
+    \end{itemize}
+
+  \item Add estimated time remaining:
+    \begin{itemize}[itemsep=1pt]
+      \item Below the active step, show ``Estimated: 5--8 seconds'' for diagnosis, ``8--12 seconds'' for contractors
+      \item Update the estimate dynamically based on actual elapsed time
+      \item If a step takes $>$ 20 seconds, show ``Taking longer than usual...'' instead
+    \end{itemize}
+\end{enumerate}
+
+\textbf{Acceptance Criteria:} Pipeline bar renders at the top of the request page. Steps transition smoothly in real-time as the backend pipeline progresses. Active step shows a spinner. Completed steps show green checkmarks.
+
+\vspace{1em}
+
+% Task 1.2
+\subsection{Task 3.1.2: Implement Section-by-Section Progressive Reveal}
+
+\begin{tabularx}{\textwidth}{lX}
+\textbf{Priority:} & \critical \\
+\textbf{Time:} & 20 minutes (1:25 -- 1:45) \\
+\textbf{Depends on:} & Task 3.1.1, Phase 2 UI components \\
+\textbf{Blocks:} & Demo polish (sections appearing smoothly is the visual payoff) \\
+\end{tabularx}
+
+\vspace{0.3em}
+
+\textbf{File:} \code{src/app/(tenant)/requests/[id]/page.tsx} (refactor)
+
+\textbf{Steps:}
+\begin{enumerate}[leftmargin=2em, itemsep=2pt]
+  \item Refactor the request detail page to render sections conditionally based on pipeline state:
+    \begin{enumerate}[itemsep=1pt]
+      \item Always visible: submitted photo + description + pipeline status bar
+      \item Appears when \code{diagnosis} populates: \code{DiagnosisCard} slides in with a fade-up animation
+      \item Appears when \code{contractors} populates: \code{ContractorMap} + \code{ContractorCard} list slides in below diagnosis
+      \item Appears when \code{vetting} populates: \code{VettingCard} components slide in, enriching the contractor cards with review data and cost estimates
+      \item Appears when \code{voice\_update\_url} populates: \code{VoiceUpdate} audio player slides in at the bottom with a subtle ``ding'' notification sound
+    \end{enumerate}
+
+  \item Implement CSS animations for each section reveal:
+\begin{lstlisting}[language=CSS]
+@keyframes slideIn {
+  from { 
+    opacity: 0; 
+    transform: translateY(16px); 
+  }
+  to { 
+    opacity: 1; 
+    transform: translateY(0); 
+  }
+}
+.section-enter {
+  animation: slideIn 0.4s ease-out forwards;
+}
+\end{lstlisting}
+
+  \item Add skeleton loaders for each pending section:
+    \begin{itemize}[itemsep=1pt]
+      \item Diagnosis skeleton: pulsing rectangle matching card height
+      \item Contractor skeleton: 3 pulsing card outlines in a column
+      \item Voice skeleton: pulsing waveform placeholder
+    \end{itemize}
+
+  \item Handle the ``confidence too low'' edge case:
+    \begin{itemize}[itemsep=1pt]
+      \item If \code{diagnosis.confidence < 0.6}, show the diagnosis with an amber border and a banner: ``Our AI is less certain about this diagnosis. Your landlord has been notified for manual review.''
+      \item The pipeline still continues (contractors are still searched), but the confidence warning is visible
+    \end{itemize}
+\end{enumerate}
+
+\textbf{Acceptance Criteria:} Submitting a photo triggers a smooth, progressive page build --- each section animates in as the pipeline progresses. No blank screen or jarring layout shifts. Skeleton loaders fill the space while results are pending.
+
+\vspace{1em}
+
+% Task 1.3
+\subsection{Task 3.1.3: Fix Mobile Responsiveness \& Cross-Browser Issues}
+
+\begin{tabularx}{\textwidth}{lX}
+\textbf{Priority:} & \highpri \\
+\textbf{Time:} & 20 minutes (1:45 -- 2:05) \\
+\textbf{Depends on:} & Tasks 3.1.1 and 3.1.2 \\
+\textbf{Blocks:} & Demo reliability (demo will likely be shown on a projector from a laptop, but judges may check on their phones) \\
+\end{tabularx}
+
+\vspace{0.3em}
+
+\textbf{Steps:}
+\begin{enumerate}[leftmargin=2em, itemsep=2pt]
+  \item Test the entire tenant flow on a phone-sized viewport (375px wide):
+    \begin{itemize}[itemsep=1pt]
+      \item Photo capture button must be large enough to tap easily ($\geq$ 48px height)
+      \item Submission form must not require horizontal scrolling
+      \item Diagnosis card text must be readable without zooming
+      \item Contractor cards must stack vertically (single column)
+      \item Audio player controls must be tappable
+    \end{itemize}
+
+  \item Fix the Google Maps embed for mobile:
+    \begin{itemize}[itemsep=1pt]
+      \item Map iframe should be full-width on mobile, 50\% width on desktop
+      \item Add a fixed height (250px mobile, 350px desktop) to prevent layout shift
+      \item If using a static map image, ensure it scales with the viewport
+    \end{itemize}
+
+  \item Test on actual browsers:
+    \begin{itemize}[itemsep=1pt]
+      \item Chrome desktop (primary demo browser)
+      \item Safari mobile (judges' iPhones)
+      \item Verify \code{<audio>} element plays on all tested browsers
+      \item Verify camera capture works on mobile Chrome and Safari
+    \end{itemize}
+
+  \item Fix any Tailwind responsive breakpoints:
+    \begin{itemize}[itemsep=1pt]
+      \item Pipeline status bar: horizontal on desktop, vertical stack on mobile
+      \item Contractor cards: grid of 2 on desktop, single column on mobile
+      \item Navigation bar: compact on mobile (hamburger or simplified)
+    \end{itemize}
+\end{enumerate}
+
+\textbf{Acceptance Criteria:} The entire tenant flow works on a 375px viewport without horizontal scrolling. Camera capture, photo upload, result viewing, and audio playback all function on mobile Safari and Chrome.
+
+\vspace{1em}
+
+% Task 1.4
+\subsection{Task 3.1.4: Add Emergency Request Visual Treatment}
+
+\begin{tabularx}{\textwidth}{lX}
+\textbf{Priority:} & \medpri \\
+\textbf{Time:} & 15 minutes (2:05 -- 2:20) \\
+\textbf{Depends on:} & Diagnosis data flowing through \\
+\end{tabularx}
+
+\vspace{0.3em}
+
+\textbf{Steps:}
+\begin{enumerate}[leftmargin=2em, itemsep=2pt]
+  \item When \code{diagnosis.urgency === "emergency"}:
+    \begin{itemize}[itemsep=1pt]
+      \item The entire page gets a subtle red-tinted top border
+      \item The pipeline status bar label changes to ``EMERGENCY DISPATCH'' in red
+      \item The diagnosis card gets a red border and a pulsing red dot next to the severity
+      \item Contractor cards prioritize ``Open Now'' contractors with a prominent green badge
+      \item The voice update message opens with an urgent tone prefix
+    \end{itemize}
+
+  \item When \code{diagnosis.severity >= 4} and \code{tenant\_safety\_note} is present:
+    \begin{itemize}[itemsep=1pt]
+      \item Show a prominent safety instruction card above the diagnosis (red background, white text, large font)
+      \item Example: ``Immediate action required: Turn off the water supply valve under the sink. Do not use electrical outlets near the affected area.''
+    \end{itemize}
+\end{enumerate}
+
+\textbf{Acceptance Criteria:} Emergency requests are visually distinct from routine requests. Safety instructions are impossible to miss.
+
+\vspace{1em}
+
+% Task 1.5
+\subsection{Task 3.1.5: Wire Frontend to Person 2's Pipeline Trigger}
+
+\begin{tabularx}{\textwidth}{lX}
+\textbf{Priority:} & \critical \\
+\textbf{Time:} & 10 minutes (2:20 -- 2:30) \\
+\textbf{Depends on:} & Person 2's WDK workflow or sequential orchestrator \\
+\textbf{Blocks:} & The demo itself --- submission must trigger the full pipeline \\
+\end{tabularx}
+
+\vspace{0.3em}
+
+\textbf{Steps:}
+\begin{enumerate}[leftmargin=2em, itemsep=2pt]
+  \item Coordinate with Person 2 on the final trigger mechanism:
+    \begin{itemize}[itemsep=1pt]
+      \item If WDK is working: the submission form's \code{POST /api/requests} call triggers the WDK workflow, and the frontend just listens via Realtime
+      \item If using the sequential fallback: the submission call triggers the chain directly
+    \end{itemize}
+
+  \item Update the submission form's \code{onSubmit} handler to:
+    \begin{enumerate}[itemsep=1pt]
+      \item Upload photo to Supabase Storage
+      \item Call \code{POST /api/requests} with the photo URL, description, and unit ID
+      \item Receive the new request ID in the response
+      \item Redirect to \code{/requests/\{id\}} immediately
+      \item The request detail page's Realtime subscription handles all subsequent updates
+    \end{enumerate}
+
+  \item Test the full flow end-to-end:
+    \begin{itemize}[itemsep=1pt]
+      \item Submit a photo $\rightarrow$ redirected to request page $\rightarrow$ pipeline status bar starts animating $\rightarrow$ diagnosis appears $\rightarrow$ contractors appear $\rightarrow$ vetting appears $\rightarrow$ voice plays
+      \item Total time from submission to voice: target $<$ 30 seconds
+    \end{itemize}
+\end{enumerate}
+
+\textbf{Acceptance Criteria:} A single photo submission triggers the entire pipeline. The tenant sees progressive results appearing on the request detail page without any manual intervention. Total pipeline time is under 30 seconds.
+
+\vspace{0.5em}
+
+\begin{milestonebox}
+\textbf{Person 1 Exit Criteria by 2:30 PM}\\[4pt]
+The tenant request detail page is a polished, progressive experience: a pipeline status bar animates through 5 steps, each section (diagnosis, contractors, vetting, voice) slides in smoothly as results arrive via Realtime, emergency requests have distinct visual treatment, and the entire flow works on both desktop and mobile. One photo submission triggers the full pipeline automatically.
+\end{milestonebox}
+
+\newpage
+
+% ════════════════════════════════════════
+% PERSON 2 --- WDK WORKFLOW
+% ════════════════════════════════════════
+\section{Person 2 --- Backend \& AI Lead}
+\begin{center}
+\textcolor{medteal}{\large\textbf{WDK Durable Workflow + Pipeline Hardening + Error Recovery}}\\[2pt]
+\textcolor{textmuted}{\small Total estimated time: 85--90 minutes}
+\end{center}
+
+\vspace{0.5em}
+
+Person 2's Phase 3 mission: upgrade the Phase 2 sequential orchestrator into a production-grade durable workflow. This is the ``engineering depth'' that separates a hackathon demo from a toy --- if a step fails, the workflow retries it automatically without losing progress.
+
+\begin{warningbox}
+\textbf{Risk Management Rule:} Spend the first 10 minutes evaluating whether WDK is feasible in the remaining time. If it feels too complex, \textbf{immediately fall back} to hardening the sequential orchestrator (Task 3.2.4). A reliable sequential chain is infinitely better than a half-broken WDK implementation. The judges care about ``does it work live'' (45\%), not ``is it durable.''
+\end{warningbox}
+
+\vspace{0.5em}
+
+% Task 2.1
+\subsection{Task 3.2.1: Evaluate WDK Feasibility (Go/No-Go)}
+
+\begin{tabularx}{\textwidth}{lX}
+\textbf{Priority:} & \critical \\
+\textbf{Time:} & 10 minutes (1:00 -- 1:10) \\
+\textbf{Depends on:} & Phase 2 complete \\
+\textbf{Blocks:} & Entire Person 2 task direction \\
+\end{tabularx}
+
+\vspace{0.3em}
+
+\textbf{Steps:}
+\begin{enumerate}[leftmargin=2em, itemsep=2pt]
+  \item Review the Vercel WDK documentation at \code{vercel.com/docs/workflow}:
+    \begin{itemize}[itemsep=1pt]
+      \item Understand the \code{serve()} function and step definition pattern
+      \item Check if WDK supports the current Vercel plan (hackathon accounts)
+      \item Verify WDK can be installed: \code{npm i @vercel/workflow}
+    \end{itemize}
+
+  \item Attempt a minimal WDK test:
+    \begin{itemize}[itemsep=1pt]
+      \item Create a simple 2-step workflow that logs ``Step 1'' and ``Step 2''
+      \item Deploy and trigger it
+      \item If it works within 5 minutes $\rightarrow$ \textbf{GO} with WDK (Tasks 3.2.2 and 3.2.3)
+      \item If it fails or is too confusing $\rightarrow$ \textbf{NO-GO}, jump to Task 3.2.4 (harden sequential)
+    \end{itemize}
+\end{enumerate}
+
+\textbf{Decision:}
+\begin{tabularx}{\textwidth}{|l|X|}
+\hline
+\rowcolor{primary}
+\textcolor{white}{\textbf{Outcome}} & \textcolor{white}{\textbf{Action}} \\
+\hline
+WDK test works & Proceed with Tasks 3.2.2 $\rightarrow$ 3.2.3 $\rightarrow$ 3.2.5 \\
+\hline
+WDK test fails or unclear & Skip Tasks 3.2.2 and 3.2.3. Jump to Task 3.2.4 (harden sequential fallback) \\
+\hline
+\end{tabularx}
+
+\vspace{1em}
+
+% Task 2.2 (WDK path)
+\subsection{Task 3.2.2: Build WDK Durable Workflow (GO Path)}
+
+\begin{tabularx}{\textwidth}{lX}
+\textbf{Priority:} & \highpri \\
+\textbf{Time:} & 35 minutes (1:10 -- 1:45) \\
+\textbf{Depends on:} & Task 3.2.1 GO decision \\
+\textbf{Blocks:} & Pipeline durability \\
+\end{tabularx}
+
+\vspace{0.3em}
+
+\textbf{File:} \code{src/app/api/workflows/maintenance/route.ts}
+
+\textbf{Steps:}
+\begin{enumerate}[leftmargin=2em, itemsep=2pt]
+  \item Install the WDK package:
+    \begin{codebox}
+npm i @vercel/workflow
+    \end{codebox}
+
+  \item Create the workflow with 6 durable steps:
+\begin{lstlisting}[language=JavaScript]
+import { serve } from '@vercel/workflow';
+
+export const POST = serve(async (step) => {
+  // Step 1: Validate request
+  const request = await step.run('validate', 
+    async () => {
+      const data = await supabase
+        .from('maintenance_requests')
+        .select('*, units(*, properties(*))')
+        .eq('id', step.context.requestId)
+        .single();
+      if (!data) throw new Error('Request not found');
+      return data;
+    });
+
+  // Step 2: Diagnose via Gemini Vision
+  const diagnosis = await step.run('diagnose', 
+    async () => {
+      const result = await callDiagnoseAPI(
+        request.id);
+      return result;
+    });
+
+  // Step 3: Find contractors via Maps
+  const contractors = await step.run(
+    'find-contractors', async () => {
+      const result = await callContractorsAPI(
+        request.id, 
+        diagnosis.category,
+        request.units.properties.address);
+      return result;
+    });
+
+  // Step 4: Vet top contractors via Search
+  const vetting = await step.run(
+    'vet-contractors', async () => {
+      const result = await callVetAPI(
+        request.id,
+        contractors.slice(0, 3),
+        diagnosis.recommended_action,
+        request.units.properties.city);
+      return result;
+    });
+
+  // Step 5: Generate work order
+  const workOrder = await step.run(
+    'generate-work-order', async () => {
+      const result = await callWorkOrderAPI(
+        request.id);
+      return result;
+    });
+
+  // Step 6: Voice notification
+  const notification = await step.run('notify', 
+    async () => {
+      const result = await callNotifyAPI(
+        request.id);
+      return result;
+    });
+
+  return { success: true, requestId: request.id };
+});
+\end{lstlisting}
+
+  \item Each \code{step.run()} call automatically:
+    \begin{itemize}[itemsep=1pt]
+      \item Persists the output after success (if the workflow crashes, it resumes from the last completed step)
+      \item Retries on transient failure (network timeouts, 5xx errors) with exponential backoff
+      \item Logs execution metadata (duration, attempt count) for observability
+    \end{itemize}
+
+  \item Create helper functions that call the existing Phase 2 API routes internally:
+    \begin{itemize}[itemsep=1pt]
+      \item \code{callDiagnoseAPI(requestId)} --- calls the logic from \code{/api/diagnose} directly (not via HTTP, but importing the function)
+      \item \code{callContractorsAPI(...)} --- calls \code{/api/contractors} logic
+      \item Same pattern for vet, work-order, notify
+      \item This avoids HTTP overhead and cold starts between steps
+    \end{itemize}
+\end{enumerate}
+
+\textbf{Acceptance Criteria:} The WDK workflow executes all 6 steps in sequence. If Step 3 fails, it retries Step 3 without re-running Steps 1 and 2. The workflow can be triggered via HTTP POST.
+
+\vspace{1em}
+
+% Task 2.3 (WDK path)
+\subsection{Task 3.2.3: Wire Submission to WDK Trigger}
+
+\begin{tabularx}{\textwidth}{lX}
+\textbf{Priority:} & \highpri \\
+\textbf{Time:} & 15 minutes (1:45 -- 2:00) \\
+\textbf{Depends on:} & Task 3.2.2 \\
+\textbf{Blocks:} & End-to-end pipeline activation \\
+\end{tabularx}
+
+\vspace{0.3em}
+
+\textbf{File:} \code{src/app/api/requests/route.ts} (update)
+
+\textbf{Steps:}
+\begin{enumerate}[leftmargin=2em, itemsep=2pt]
+  \item Update \code{POST /api/requests} to trigger the WDK workflow instead of the sequential chain:
+\begin{lstlisting}[language=JavaScript]
+// After creating the maintenance_requests record:
+await fetch(
+  `${process.env.VERCEL_URL}/api/workflows/
+   maintenance`,
+  {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ 
+      requestId: newRequest.id 
+    })
+  }
+);
+\end{lstlisting}
+
+  \item The WDK workflow runs asynchronously --- the \code{POST /api/requests} response returns immediately with the request ID while the workflow executes in the background.
+
+  \item Add a workflow status column to track progress (optional but useful for debugging):
+    \begin{itemize}[itemsep=1pt]
+      \item Add \code{workflow\_status} text column to \code{maintenance\_requests}: \code{pending, running, completed, failed}
+      \item Each workflow step updates this column via Supabase
+    \end{itemize}
+
+  \item Test the full flow: submit photo $\rightarrow$ WDK triggers $\rightarrow$ all 6 steps execute $\rightarrow$ DB columns populate $\rightarrow$ frontend Realtime updates.
+\end{enumerate}
+
+\textbf{Acceptance Criteria:} Photo submission triggers the WDK workflow. All 6 steps execute automatically. Frontend receives real-time updates for each step completion.
+
+\vspace{1em}
+
+% Task 2.4 (Fallback path)
+\subsection{Task 3.2.4: Harden Sequential Orchestrator (NO-GO Fallback)}
+
+\begin{tabularx}{\textwidth}{lX}
+\textbf{Priority:} & \critical~(only if WDK is skipped) \\
+\textbf{Time:} & 40 minutes (1:10 -- 1:50) \\
+\textbf{Depends on:} & Task 3.2.1 NO-GO decision \\
+\textbf{Blocks:} & Pipeline reliability for the demo \\
+\end{tabularx}
+
+\vspace{0.3em}
+
+\textbf{File:} \code{src/app/api/requests/route.ts} (refactor)
+
+\textbf{If WDK is skipped}, this task upgrades the Phase 2 sequential chain into a reliable orchestrator:
+
+\textbf{Steps:}
+\begin{enumerate}[leftmargin=2em, itemsep=2pt]
+  \item Add retry logic with exponential backoff to each API call:
+\begin{lstlisting}[language=JavaScript]
+async function withRetry(fn, maxRetries = 3) {
+  for (let i = 0; i < maxRetries; i++) {
+    try {
+      return await fn();
+    } catch (error) {
+      if (i === maxRetries - 1) throw error;
+      await new Promise(r => 
+        setTimeout(r, 1000 * Math.pow(2, i)));
+      console.log(`Retry ${i + 1}/${maxRetries}`);
+    }
+  }
+}
+\end{lstlisting}
+
+  \item Add per-step status updates to the database so the frontend can track progress:
+\begin{lstlisting}[language=JavaScript]
+// After each step completes:
+await supabase
+  .from('maintenance_requests')
+  .update({ 
+    status: 'diagnosing', 
+    updated_at: new Date().toISOString() 
+  })
+  .eq('id', requestId);
+\end{lstlisting}
+
+  \item Add timeout protection to prevent hanging:
+    \begin{itemize}[itemsep=1pt]
+      \item Wrap each API call in a \code{Promise.race()} with a 20-second timeout
+      \item If a step times out, log the error and continue to the next step (graceful degradation)
+      \item Example: if vetting times out, the pipeline still generates a work order with contractors but without vetting data
+    \end{itemize}
+
+  \item Add a ``pipeline failed'' recovery path:
+    \begin{itemize}[itemsep=1pt]
+      \item If any step fails after retries, set \code{status = "error"} and \code{error\_message = "Step X failed: reason"}
+      \item The frontend shows a ``Something went wrong --- your landlord has been notified'' message
+      \item The landlord dashboard shows the error with a ``Retry'' button
+    \end{itemize}
+
+  \item Make the orchestrator run asynchronously (non-blocking):
+\begin{lstlisting}[language=JavaScript]
+// In POST /api/requests:
+// Return immediately, run pipeline in background
+const requestId = newRequest.id;
+
+// Fire-and-forget the pipeline
+runPipeline(requestId).catch(err => {
+  console.error('Pipeline failed:', err);
+  // Update status to error in DB
+});
+
+return NextResponse.json({ 
+  id: requestId, 
+  status: 'submitted' 
+});
+\end{lstlisting}
+
+  \item Ensure the background pipeline does not get killed by Vercel's function timeout:
+    \begin{itemize}[itemsep=1pt]
+      \item Vercel serverless functions have a default 10-second timeout on the Hobby plan
+      \item Upgrade to 60-second max execution time in \code{vercel.json}:
+    \end{itemize}
+\begin{lstlisting}[language=JSON]
+{
+  "functions": {
+    "src/app/api/requests/route.ts": {
+      "maxDuration": 60
+    }
+  }
+}
+\end{lstlisting}
+\end{enumerate}
+
+\textbf{Acceptance Criteria:} The sequential orchestrator runs all steps with retry logic, updates the DB after each step (triggering Realtime), handles timeouts gracefully, and runs asynchronously so the submission response is instant.
+
+\vspace{1em}
+
+% Task 2.5
+\subsection{Task 3.2.5: End-to-End Pipeline Stress Test}
+
+\begin{tabularx}{\textwidth}{lX}
+\textbf{Priority:} & \critical \\
+\textbf{Time:} & 30 minutes (2:00 -- 2:30, or 1:50 -- 2:20 if on fallback path) \\
+\textbf{Depends on:} & Task 3.2.2/3.2.3 (WDK path) or Task 3.2.4 (fallback path) \\
+\textbf{Blocks:} & Demo reliability \\
+\end{tabularx}
+
+\vspace{0.3em}
+
+\textbf{Steps:}
+\begin{enumerate}[leftmargin=2em, itemsep=2pt]
+  \item Run 5 complete pipeline tests on the \textbf{live Vercel deployment} (not localhost):
+    \begin{itemize}[itemsep=1pt]
+      \item Test 1: Water-stained ceiling (plumbing, routine)
+      \item Test 2: Sparking outlet (electrical, emergency)
+      \item Test 3: Cracked window (structural, routine)
+      \item Test 4: Moldy bathroom wall (cosmetic/health, routine)
+      \item Test 5: Broken HVAC unit photo (HVAC, routine)
+    \end{itemize}
+
+  \item For each test, measure and record:
+
+\begin{tabularx}{\textwidth}{|l|l|X|}
+\hline
+\rowcolor{primary}
+\textcolor{white}{\textbf{Metric}} & \textcolor{white}{\textbf{Target}} & \textcolor{white}{\textbf{Action if Exceeded}} \\
+\hline
+Photo upload time & $<$ 3 sec & Compress images more aggressively client-side \\
+\hline
+Diagnosis time & $<$ 5 sec & Check prompt length, simplify system prompt \\
+\hline
+Contractor search time & $<$ 10 sec & Reduce search radius, simplify prompt \\
+\hline
+Vetting time (3 contractors) & $<$ 12 sec & Reduce to top 2 contractors instead of 3 \\
+\hline
+Voice generation time & $<$ 3 sec & Shorten the message template \\
+\hline
+Total pipeline time & $<$ 30 sec & Identify bottleneck and optimize \\
+\hline
+\end{tabularx}
+
+  \item Test the emergency path specifically:
+    \begin{itemize}[itemsep=1pt]
+      \item Submit the sparking outlet photo
+      \item Verify urgency is classified as ``emergency''
+      \item Verify auto-approval fires regardless of cost
+      \item Verify contractor list prioritizes open-now businesses
+    \end{itemize}
+
+  \item Test the retry path (if possible):
+    \begin{itemize}[itemsep=1pt]
+      \item Temporarily break one API route (e.g., return 500 from \code{/api/vet})
+      \item Verify the retry logic kicks in (sequential) or WDK retries the step
+      \item Restore the route and verify the pipeline completes
+    \end{itemize}
+
+  \item Document any issues found and share with the team for Phase 4 fixes.
+\end{enumerate}
+
+\textbf{Acceptance Criteria:} 5 out of 5 pipeline tests complete successfully on the live deployment. Average total pipeline time is under 30 seconds. Emergency path works correctly. No data corruption or orphaned records.
+
+\vspace{0.5em}
+
+\begin{milestonebox}
+\textbf{Person 2 Exit Criteria by 2:30 PM}\\[4pt]
+The pipeline is either running on WDK (durable, retryable, observable) or on a hardened sequential orchestrator (with retry logic, timeouts, and graceful degradation). Five different issue types have been tested end-to-end on the live deployment. Average pipeline time is under 30 seconds. The submission API returns instantly and the pipeline runs asynchronously.
+\end{milestonebox}
+
+\newpage
+
+% ════════════════════════════════════════
+% PERSON 3 --- LANDLORD DASHBOARD
+% ════════════════════════════════════════
+\section{Person 3 --- API \& Integrations Lead}
+\begin{center}
+\textcolor{medpurple}{\large\textbf{Landlord Dashboard: Real-Time Monitoring + Approvals + History}}\\[2pt]
+\textcolor{textmuted}{\small Total estimated time: 85--90 minutes}
+\end{center}
+
+\vspace{0.5em}
+
+Person 3 builds the \textbf{second screen of the demo} --- the landlord's view. While the tenant sees progressive results on their request page, the landlord sees a command center showing all requests across all properties in real-time. This is what the demo switches to after showing the tenant flow.
+
+\vspace{0.5em}
+
+% Task 3.1
+\subsection{Task 3.3.1: Build Request List View}
+
+\begin{tabularx}{\textwidth}{lX}
+\textbf{Priority:} & \critical \\
+\textbf{Time:} & 25 minutes (1:00 -- 1:25) \\
+\textbf{Depends on:} & Phase 2 complete, Supabase schema and data \\
+\textbf{Blocks:} & The dashboard is the second half of the demo \\
+\end{tabularx}
+
+\vspace{0.3em}
+
+\textbf{File:} \code{src/app/(landlord)/dashboard/page.tsx}
+
+\textbf{Steps:}
+\begin{enumerate}[leftmargin=2em, itemsep=2pt]
+  \item Create the dashboard page with a server component that fetches all requests:
+\begin{lstlisting}[language=JavaScript]
+const { data: requests } = await supabase
+  .from('maintenance_requests')
+  .select(`
+    *,
+    units (
+      unit_label,
+      tenant_name,
+      properties ( address, city )
+    )
+  `)
+  .order('created_at', { ascending: false });
+\end{lstlisting}
+
+  \item Build the request list as a card-based layout:
+    \begin{itemize}[itemsep=1pt]
+      \item Each card shows: submitted photo thumbnail (64$\times$64px), unit label, tenant name, status badge, category badge, severity dots, time ago (``5 min ago''), estimated cost range
+      \item Status badge colors:
+        \begin{itemize}[itemsep=1pt]
+          \item \textbf{Submitted:} gray
+          \item \textbf{Diagnosed:} blue
+          \item \textbf{Dispatched:} green
+          \item \textbf{In progress:} amber
+          \item \textbf{Resolved:} green with checkmark
+          \item \textbf{Error:} red
+        \end{itemize}
+      \item Emergency requests get a red left border and a pulsing dot
+      \item Cards are clickable --- navigate to \code{/dashboard/requests/[id]}
+    \end{itemize}
+
+  \item Add a filter bar at the top:
+    \begin{itemize}[itemsep=1pt]
+      \item Filter by status: All, Active, Needs Approval, Resolved
+      \item Filter by urgency: All, Emergency Only
+      \item Sort by: Newest First (default), Severity (highest first), Cost (highest first)
+    \end{itemize}
+
+  \item Show summary statistics at the very top:
+    \begin{itemize}[itemsep=1pt]
+      \item Total active requests count
+      \item Requests needing approval count (amber badge)
+      \item Emergency requests count (red badge if $>$ 0)
+      \item Monthly spend total (sum of \code{estimated\_cost\_high} for resolved requests)
+    \end{itemize}
+\end{enumerate}
+
+\textbf{Acceptance Criteria:} Dashboard loads and shows all maintenance requests with thumbnails, status badges, and severity indicators. Filters work. Summary stats render at the top.
+
+\vspace{1em}
+
+% Task 3.2
+\subsection{Task 3.3.2: Add Supabase Realtime to Dashboard}
+
+\begin{tabularx}{\textwidth}{lX}
+\textbf{Priority:} & \critical \\
+\textbf{Time:} & 20 minutes (1:25 -- 1:45) \\
+\textbf{Depends on:} & Task 3.3.1 \\
+\textbf{Blocks:} & Demo impact (landlord sees requests appear live) \\
+\end{tabularx}
+
+\vspace{0.3em}
+
+\textbf{File:} \code{src/components/DashboardRealtime.tsx} (client component)
+
+\textbf{Steps:}
+\begin{enumerate}[leftmargin=2em, itemsep=2pt]
+  \item Create a client component that wraps the request list and subscribes to Supabase Realtime:
+\begin{lstlisting}[language=JavaScript]
+'use client';
+import { useEffect, useState } from 'react';
+import { createClient } from '@/lib/supabase/client';
+
+export function DashboardRealtime({ 
+  initialRequests 
+}) {
+  const [requests, setRequests] = 
+    useState(initialRequests);
+  const supabase = createClient();
+
+  useEffect(() => {
+    const channel = supabase
+      .channel('dashboard')
+      .on('postgres_changes', {
+        event: '*',
+        schema: 'public',
+        table: 'maintenance_requests'
+      }, (payload) => {
+        if (payload.eventType === 'INSERT') {
+          setRequests(prev => 
+            [payload.new, ...prev]);
+        }
+        if (payload.eventType === 'UPDATE') {
+          setRequests(prev => prev.map(r => 
+            r.id === payload.new.id 
+              ? payload.new : r));
+        }
+      })
+      .subscribe();
+
+    return () => { supabase.removeChannel(channel); };
+  }, []);
+
+  return <RequestList requests={requests} />;
+}
+\end{lstlisting}
+
+  \item Add a visual ``new request'' notification:
+    \begin{itemize}[itemsep=1pt]
+      \item When an INSERT event fires, the new card slides in at the top of the list with a highlight animation (brief yellow background that fades to white over 2 seconds)
+      \item A toast notification appears: ``New request from Sarah in Apt 1A''
+      \item If the request is an emergency, the toast is red and persistent (doesn't auto-dismiss)
+    \end{itemize}
+
+  \item When an UPDATE event fires (status or diagnosis changes):
+    \begin{itemize}[itemsep=1pt]
+      \item The affected card smoothly updates its status badge and any changed fields
+      \item No jarring re-render --- use React state updates with transition
+    \end{itemize}
+\end{enumerate}
+
+\textbf{Acceptance Criteria:} When a tenant submits a new request, it appears on the landlord dashboard within 1 second without page refresh. Status changes animate smoothly. Emergency requests trigger persistent toast notifications.
+
+\vspace{1em}
+
+% Task 3.3
+\subsection{Task 3.3.3: Build Request Detail View for Landlord}
+
+\begin{tabularx}{\textwidth}{lX}
+\textbf{Priority:} & \highpri \\
+\textbf{Time:} & 20 minutes (1:45 -- 2:05) \\
+\textbf{Depends on:} & Task 3.3.1 \\
+\textbf{Blocks:} & Approval flow \\
+\end{tabularx}
+
+\vspace{0.3em}
+
+\textbf{File:} \code{src/app/(landlord)/dashboard/requests/[id]/page.tsx}
+
+\textbf{Steps:}
+\begin{enumerate}[leftmargin=2em, itemsep=2pt]
+  \item Create the landlord's request detail page (different from the tenant's view):
+    \begin{itemize}[itemsep=1pt]
+      \item \textbf{Left column (60\%):} Tenant's submitted photo (full size), AI diagnosis card (reuse \code{DiagnosisCard} component), contractor list with vetting details (reuse \code{ContractorCard} + \code{VettingCard})
+      \item \textbf{Right column (40\%):} Work order summary, cost estimate, approval controls, voice update player, action buttons
+    \end{itemize}
+
+  \item Build the approval section (right column):
+    \begin{itemize}[itemsep=1pt]
+      \item If \code{landlord\_approved === true}: show green ``Approved'' badge with timestamp
+      \item If \code{landlord\_approved === false} and cost $>$ \$500:
+        \begin{itemize}[itemsep=1pt]
+          \item Show the cost estimate prominently: ``Estimated cost: \$X -- \$Y''
+          \item Large green ``Approve \& Dispatch'' button
+          \item Smaller red ``Decline'' button
+          \item Optional: text input for landlord notes
+        \end{itemize}
+      \item If auto-approved (cost $\leq$ \$500 or emergency): show ``Auto-approved'' badge with the reason
+    \end{itemize}
+
+  \item Implement the approval action:
+\begin{lstlisting}[language=JavaScript]
+async function handleApprove() {
+  await supabase
+    .from('maintenance_requests')
+    .update({ 
+      landlord_approved: true, 
+      status: 'dispatched',
+      updated_at: new Date().toISOString()
+    })
+    .eq('id', requestId);
+}
+\end{lstlisting}
+
+  \item Show the work order section:
+    \begin{itemize}[itemsep=1pt]
+      \item If \code{work\_order} JSON exists, render it as a formatted card: property address, unit, tenant contact, issue diagnosis, assigned contractor with phone, cost estimate
+      \item Add a ``Copy work order'' button that copies a text summary to clipboard (useful for texting the contractor)
+    \end{itemize}
+\end{enumerate}
+
+\textbf{Acceptance Criteria:} Landlord can view the full request detail including photo, diagnosis, contractors, vetting, work order, and cost estimate. Approval button works and updates the status in real-time.
+
+\vspace{1em}
+
+% Task 3.4
+\subsection{Task 3.3.4: Build Cost Tracking Summary}
+
+\begin{tabularx}{\textwidth}{lX}
+\textbf{Priority:} & \medpri \\
+\textbf{Time:} & 15 minutes (2:05 -- 2:20) \\
+\textbf{Depends on:} & Task 3.3.1 \\
+\textbf{Blocks:} & Demo depth (shows long-term value to judges) \\
+\end{tabularx}
+
+\vspace{0.3em}
+
+\textbf{File:} \code{src/components/CostSummary.tsx}
+
+\textbf{Steps:}
+\begin{enumerate}[leftmargin=2em, itemsep=2pt]
+  \item Create a summary component for the top of the dashboard:
+
+  \item Calculate and display four key metrics:
+    \begin{itemize}[itemsep=1pt]
+      \item \textbf{Active requests:} Count of requests where status is not ``resolved'' or ``cancelled''
+      \item \textbf{Pending approval:} Count where \code{landlord\_approved = false} and cost $>$ \$500
+      \item \textbf{Month-to-date spend:} Sum of \code{estimated\_cost\_high} for dispatched/resolved requests this month
+      \item \textbf{Average response time:} Mean of (\code{updated\_at} - \code{created\_at}) for resolved requests
+    \end{itemize}
+
+  \item Design as a row of 4 stat cards at the top of the dashboard:
+    \begin{itemize}[itemsep=1pt]
+      \item Each card has: large number, label, optional trend indicator (up/down arrow)
+      \item Active requests: blue card
+      \item Pending approval: amber card (attention-grabbing)
+      \item Spend: neutral gray card
+      \item Response time: green card if $<$ 1 hour, amber if $>$ 1 hour
+    \end{itemize}
+\end{enumerate}
+
+\textbf{Acceptance Criteria:} Four stat cards render at the top of the dashboard with accurate numbers from the database.
+
+\vspace{1em}
+
+% Task 3.5
+\subsection{Task 3.3.5: Seed Additional Demo Data for Dashboard}
+
+\begin{tabularx}{\textwidth}{lX}
+\textbf{Priority:} & \highpri \\
+\textbf{Time:} & 10 minutes (2:20 -- 2:30) \\
+\textbf{Depends on:} & All dashboard components \\
+\textbf{Blocks:} & Dashboard looking impressive during the demo \\
+\end{tabularx}
+
+\vspace{0.3em}
+
+\textbf{Steps:}
+\begin{enumerate}[leftmargin=2em, itemsep=2pt]
+  \item Seed 3--4 pre-existing maintenance requests in various states to make the dashboard look populated during the demo:
+
+\begin{tabularx}{\textwidth}{|l|l|l|l|}
+\hline
+\rowcolor{primary}
+\textcolor{white}{\textbf{Unit}} & \textcolor{white}{\textbf{Issue}} & \textcolor{white}{\textbf{Status}} & \textcolor{white}{\textbf{Cost}} \\
+\hline
+Apt 2B & Leaky faucet & Resolved (3 days ago) & \$180 \\
+\hline
+Apt 1A & Broken light fixture & Dispatched (1 day ago) & \$120 \\
+\hline
+Apt 3C & Stuck window & Diagnosed, awaiting approval & \$650 \\
+\hline
+\end{tabularx}
+
+  \item For each seeded request, manually populate the \code{diagnosis}, \code{contractors}, and \code{work\_order} JSONB columns with realistic data matching the Zod schemas.
+
+  \item The ``stuck window'' request should have \code{landlord\_approved = false} and a cost over \$500 so the demo can show the approval flow.
+
+  \item Add realistic timestamps (spread over the past week) so the time-based metrics look natural.
+
+  \item Verify: the dashboard now shows 3--4 cards in various states plus the summary stats. The pending approval badge shows ``1'' for the window repair request.
+\end{enumerate}
+
+\textbf{Acceptance Criteria:} The dashboard looks like a real, active landlord's command center with requests in various stages. The demo can show the approval flow on the pre-seeded \$650 window repair request.
+
+\vspace{0.5em}
+
+\begin{milestonebox}
+\textbf{Person 3 Exit Criteria by 2:30 PM}\\[4pt]
+A fully functional landlord dashboard with: (1) real-time request list that updates instantly when tenants submit requests, (2) request detail view with photo, diagnosis, contractors, vetting, and work order, (3) approve/decline buttons for high-cost repairs, (4) cost tracking summary with 4 stat cards, and (5) pre-seeded demo data showing requests in various states. The dashboard is the second screen of the demo and looks like a production product.
+\end{milestonebox}
+
+\newpage
+
+% ════════════════════════════════════════
+% END-OF-PHASE SYNC
+% ════════════════════════════════════════
+\section{End-of-Phase Sync: 2:30 PM Standup}
+
+\begin{syncbox}
+{\large\textbf{5-Minute Team Standup --- 2:30 PM sharp. Lunch should already be eaten.}}\\[8pt]
+
+This sync determines whether you're on track for a winning demo or need to triage.\\[6pt]
+
+\textbf{Each person reports:}
+\begin{enumerate}[leftmargin=2em, itemsep=4pt]
+  \item \textbf{Person 1 reports:}
+    \begin{itemize}[itemsep=1pt]
+      \item ``Pipeline status bar: working / partially working''
+      \item ``Progressive reveal: all sections animate in / some sections missing''
+      \item ``Mobile responsive: tested / not tested yet''
+      \item ``Emergency treatment: implemented / skipped''
+    \end{itemize}
+  \item \textbf{Person 2 reports:}
+    \begin{itemize}[itemsep=1pt]
+      \item ``Pipeline path: WDK working / sequential fallback working''
+      \item ``Stress test results: X/5 passed, average time Y seconds''
+      \item ``Any reliability issues discovered?''
+      \item ``Async trigger working? Submission response is instant?''
+    \end{itemize}
+  \item \textbf{Person 3 reports:}
+    \begin{itemize}[itemsep=1pt]
+      \item ``Dashboard list view: working / rendering issues''
+      \item ``Realtime: new requests appear live / not working''
+      \item ``Approval flow: working / not implemented''
+      \item ``Demo data seeded: yes / in progress''
+    \end{itemize}
+\end{enumerate}
+
+\vspace{4pt}
+\textbf{The critical question:} Can we run the full demo right now?
+\begin{itemize}[leftmargin=1.5em, itemsep=2pt]
+  \item Submit a photo on tenant's phone
+  \item Watch results stream in on the tenant's request page
+  \item Switch to landlord dashboard and see the request appear
+  \item Show the approval flow on a pre-seeded high-cost request
+  \item Play the voice update
+\end{itemize}
+
+If yes $\rightarrow$ Phase 4 is pure polish. If no $\rightarrow$ Phase 4 prioritizes fixing whatever is broken.
+\end{syncbox}
+
+\vspace{1em}
+
+% ════════════════════════════════════════
+% CUTLINE
+% ════════════════════════════════════════
+\section{If Behind Schedule: Phase 3 Cutline}
+
+\begin{tabularx}{\textwidth}{|l|l|X|}
+\hline
+\rowcolor{primary}
+\textcolor{white}{\textbf{Person}} & \textcolor{white}{\textbf{Must Have}} & \textcolor{white}{\textbf{Can Cut}} \\
+\hline
+Person 1 & Pipeline status bar + progressive reveal working with real data & Emergency visual treatment, mobile polish (defer to Phase 4) \\
+\hline
+Person 2 & Pipeline triggers from submission and runs all steps (either WDK or sequential) & WDK (use sequential), retry logic refinement, 5th stress test \\
+\hline
+Person 3 & Dashboard request list with Realtime + request detail with approve button & Cost tracking summary, filter bar, seeded demo data (seed in Phase 4) \\
+\hline
+\end{tabularx}
+
+\vspace{0.5em}
+
+\begin{successbox}
+\textbf{Minimum Viable Phase 3:} The team must exit Phase 3 with: (1) one photo submission triggers the entire pipeline automatically, (2) the tenant sees results streaming in progressively, and (3) the landlord sees new requests appear on their dashboard in real-time. These three capabilities together make the demo work. Everything else is polish.
+\end{successbox}
+
+\newpage
+
+% ════════════════════════════════════════
+% FILE CHANGES
+% ════════════════════════════════════════
+\section{New \& Modified Files in Phase 3}
+
+\begin{codebox}
+src/\\
+\quad app/\\
+\quad\quad api/\\
+\quad\quad\quad requests/route.ts \quad\quad\quad\quad\quad\# P2 --- updated to trigger WDK or async sequential\\
+\quad\quad\quad workflows/\\
+\quad\quad\quad\quad maintenance/route.ts \quad\quad\# P2 --- NEW: WDK durable workflow (if GO path)\\
+\quad\quad (tenant)/\\
+\quad\quad\quad requests/[id]/page.tsx \quad\quad\# P1 --- refactored with progressive reveal\\
+\quad\quad (landlord)/\\
+\quad\quad\quad dashboard/\\
+\quad\quad\quad\quad page.tsx \quad\quad\quad\quad\quad\quad\quad\quad\# P3 --- NEW: dashboard list view\\
+\quad\quad\quad\quad requests/[id]/page.tsx \quad\# P3 --- NEW: landlord detail + approval\\
+\quad components/\\
+\quad\quad PipelineStatus.tsx \quad\quad\quad\quad\quad\# P1 --- NEW: 5-step progress bar\\
+\quad\quad DashboardRealtime.tsx \quad\quad\quad\# P3 --- NEW: Realtime wrapper\\
+\quad\quad RequestListCard.tsx \quad\quad\quad\quad\# P3 --- NEW: dashboard list item\\
+\quad\quad ApprovalPanel.tsx \quad\quad\quad\quad\quad\# P3 --- NEW: approve/decline controls\\
+\quad\quad CostSummary.tsx \quad\quad\quad\quad\quad\quad\# P3 --- NEW: stat cards\\
+\quad\quad WorkOrderView.tsx \quad\quad\quad\quad\quad\# P3 --- NEW: work order display\\
+\\
+vercel.json \quad\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad\# P2 --- NEW: function timeout config\\
+\end{codebox}
+
+\vspace{1em}
+
+% ════════════════════════════════════════
+% PHASE 3 → 4 TRANSITION
+% ════════════════════════════════════════
+\section{Transition to Phase 4}
+
+Phase 4 (2:30 -- 4:00 PM) is entirely about \textbf{polish and testing}. No new features should be introduced. The tasks for Phase 4 will be determined by the 2:30 PM sync results:
+
+\begin{tabularx}{\textwidth}{|l|X|}
+\hline
+\rowcolor{primary}
+\textcolor{white}{\textbf{If Phase 3 Result...}} & \textcolor{white}{\textbf{Phase 4 Focus}} \\
+\hline
+Everything works perfectly & UI animations, loading states, error messages, Sentry traces, accessibility, mobile testing, edge case fixes \\
+\hline
+Pipeline works but dashboard is rough & Person 3 polishes dashboard. Person 1 and 2 run stress tests and fix bugs. \\
+\hline
+Pipeline is flaky & Person 2 debugs pipeline reliability. Person 1 adds better error states to UI. Person 3 ensures fallback demo works with pre-seeded data. \\
+\hline
+Dashboard missing & Person 3 builds minimal dashboard (just a request list with status badges). Person 1 and 2 prepare to demo tenant flow only. \\
+\hline
+\end{tabularx}
+
+\vspace{0.5em}
+
+\begin{dangerbox}
+\textbf{Absolute deadline reminder:} Submissions are due at \textbf{5:00 PM}. Phase 4 ends at 4:00 PM to leave a full hour for demo prep, video recording, and submission. There is zero flexibility on this timeline.
+\end{dangerbox}
+
+\vspace{2em}
+
+\begin{center}
+\textcolor{textmuted}{\rule{0.4\textwidth}{0.4pt}}\\[6pt]
+\textcolor{textmuted}{\small End of Phase 3 Task Breakdown}
+\end{center}
+
+\end{document}
