@@ -7,6 +7,7 @@ import PhotoCapture from "@/components/PhotoCapture";
 import {
   AlertCircle,
   FileText,
+  Info,
   Loader2,
   Mic,
   MicOff,
@@ -14,9 +15,12 @@ import {
 } from "lucide-react";
 import { motion } from "framer-motion";
 import {
-  normalizeRequestLanguage,
-  REQUEST_LANGUAGE_OPTIONS,
-} from "@/lib/request-language";
+  BROWSER_DEMO_UNIT,
+  createBrowserDemoRequest,
+  fileToDataUrl,
+  isSchemaSetupError,
+} from "@/lib/browser-demo-store";
+import { REQUEST_LANGUAGE_OPTIONS, normalizeRequestLanguage } from "@/lib/request-language";
 
 type SpeechRecognitionAlternativeLike = {
   transcript: string;
@@ -93,6 +97,7 @@ export default function SubmitRequestPage() {
   const [voiceError, setVoiceError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [demoModeNotice, setDemoModeNotice] = useState<string | null>(null);
   const recognitionRef = useRef<BrowserSpeechRecognition | null>(null);
 
   useEffect(() => {
@@ -185,10 +190,22 @@ export default function SubmitRequestPage() {
       const response = await fetch("/api/units", { method: "GET" });
       const payload = await response.json();
       if (!response.ok) {
+        const detailMessage = payload.details
+          ? `${payload.error || "Failed to fetch units"}: ${payload.details}`
+          : payload.error || "Failed to fetch units";
+
+        if (isSchemaSetupError(detailMessage)) {
+          setDemoModeNotice(
+            "The deployed Supabase tables are not set up yet, so FixFlow switched this browser into demo mode for testing."
+          );
+          setError(null);
+          setUnits([BROWSER_DEMO_UNIT]);
+          setSelectedUnit(BROWSER_DEMO_UNIT.id);
+          return;
+        }
+
         setError(
-          payload.details
-            ? `${payload.error || "Failed to fetch units"}: ${payload.details}`
-            : payload.error || "Failed to fetch units"
+          detailMessage
         );
         setUnits([]);
         setSelectedUnit("");
@@ -197,6 +214,7 @@ export default function SubmitRequestPage() {
 
       const fetchedUnits = payload.units as { id: string; unit_label: string }[];
       if (fetchedUnits && fetchedUnits.length > 0) {
+        setDemoModeNotice(null);
         setUnits(fetchedUnits);
         setSelectedUnit(fetchedUnits[0].id);
       } else {
@@ -239,6 +257,18 @@ export default function SubmitRequestPage() {
     setError(null);
 
     try {
+      if (selectedUnit === BROWSER_DEMO_UNIT.id) {
+        const localPhotoUrl = await fileToDataUrl(photo);
+        const demoRequest = createBrowserDemoRequest({
+          tenantId: user.id,
+          photoUrl: localPhotoUrl,
+          description,
+          preferredLanguage: selectedLanguage,
+        });
+        router.push(`/requests/${demoRequest.id}`);
+        return;
+      }
+
       // Send multipart form to the backend orchestrator route.
       // Backend handles storage upload + DB insert + AI pipeline trigger.
       const formData = new FormData();
@@ -264,7 +294,23 @@ export default function SubmitRequestPage() {
       router.push(`/requests/${result.requestId}`);
 
     } catch (err: any) {
-      setError(err.message || "An unexpected error occurred during submission.");
+      const message = err?.message || "An unexpected error occurred during submission.";
+      if (isSchemaSetupError(message)) {
+        const localPhotoUrl = await fileToDataUrl(photo);
+        const demoRequest = createBrowserDemoRequest({
+          tenantId: user.id,
+          photoUrl: localPhotoUrl,
+          description,
+          preferredLanguage: selectedLanguage,
+        });
+        setDemoModeNotice(
+          "The live backend is still missing its Supabase schema, so your request was saved in browser demo mode instead."
+        );
+        router.push(`/requests/${demoRequest.id}`);
+        return;
+      }
+
+      setError(message);
       setIsSubmitting(false);
     }
   };
@@ -291,6 +337,17 @@ export default function SubmitRequestPage() {
           <div className="bg-white p-3 border-2 border-navy flex items-start gap-3">
             <AlertCircle className="text-warning shrink-0" />
             <span className="font-bold text-navy text-sm uppercase">{error}</span>
+          </div>
+        </div>
+      )}
+
+      {demoModeNotice && (
+        <div className="bg-blue-50 border-2 border-accent p-4">
+          <div className="bg-white p-3 border-2 border-navy flex items-start gap-3">
+            <Info className="text-accent shrink-0" />
+            <span className="font-bold text-navy text-sm uppercase">
+              {demoModeNotice}
+            </span>
           </div>
         </div>
       )}

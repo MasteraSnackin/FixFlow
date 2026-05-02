@@ -9,6 +9,10 @@ import ContractorQuote from "@/components/ContractorQuote";
 import VoiceUpdate from "@/components/VoiceUpdate";
 import { motion } from "framer-motion";
 import PipelineStatus from "@/components/PipelineStatus";
+import {
+  getBrowserDemoRequest,
+  isBrowserDemoRequestId,
+} from "@/lib/browser-demo-store";
 
 export default function RequestDetailPage() {
   const { id } = useParams() as { id: string };
@@ -17,6 +21,19 @@ export default function RequestDetailPage() {
   const [error, setError] = useState<string | null>(null);
 
   const fetchRequest = useCallback(async () => {
+    if (isBrowserDemoRequestId(id)) {
+      const demoRequest = getBrowserDemoRequest(id);
+      if (!demoRequest) {
+        setError("not_found");
+        setRequest(null);
+        return false;
+      }
+
+      setError(null);
+      setRequest(demoRequest as Record<string, unknown>);
+      return true;
+    }
+
     const res = await fetch(`/api/requests/${id}`, { method: "GET" });
     const payload = await res.json().catch(() => ({}));
 
@@ -26,11 +43,23 @@ export default function RequestDetailPage() {
       return false;
     }
     if (res.status === 403 || res.status === 404) {
+      const demoRequest = getBrowserDemoRequest(id);
+      if (demoRequest) {
+        setError(null);
+        setRequest(demoRequest as Record<string, unknown>);
+        return true;
+      }
       setError("not_found");
       setRequest(null);
       return false;
     }
     if (!res.ok) {
+      const demoRequest = getBrowserDemoRequest(id);
+      if (demoRequest) {
+        setError(null);
+        setRequest(demoRequest as Record<string, unknown>);
+        return true;
+      }
       setError("unknown");
       setRequest(null);
       return false;

@@ -7,6 +7,7 @@ import { createClient } from "@supabase/supabase-js";
 import { Clock, AlertTriangle, CheckCircle2, Loader2, ArrowRight, Plus, FileText } from "lucide-react";
 import { motion } from "framer-motion";
 import { formatGbpRange } from "@/lib/currency";
+import { listBrowserDemoRequests } from "@/lib/browser-demo-store";
 
 // Supabase client – only used for Realtime subscriptions (anon key is fine for channels)
 const supabaseRealtime = createClient(
@@ -68,17 +69,26 @@ export default function MyRequestsPage() {
     if (!isLoaded || !user?.id) return;
 
     async function fetchMyRequests() {
+      const tenantId = user?.id;
+      if (!tenantId) return;
       setLoading(true);
       try {
         const res = await fetch("/api/my-requests");
         const data = await res.json();
+        const demoRequests = listBrowserDemoRequests(tenantId) as Request[];
         if (res.ok) {
-          setRequests(data.requests || []);
+          const liveRequests = (data.requests || []) as Request[];
+          const merged = [...demoRequests, ...liveRequests.filter((request) =>
+            !demoRequests.some((demoRequest) => demoRequest.id === request.id)
+          )];
+          setRequests(merged);
         } else {
           console.error("Failed to fetch requests:", data.error);
+          setRequests(demoRequests);
         }
       } catch (err) {
         console.error("Failed to fetch requests:", err);
+        setRequests(listBrowserDemoRequests(tenantId) as Request[]);
       }
       setLoading(false);
     }

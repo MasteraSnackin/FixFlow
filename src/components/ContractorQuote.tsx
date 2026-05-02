@@ -2,6 +2,10 @@
 
 import { useState } from "react";
 import { CheckCircle, XCircle, MessageSquareQuote, Loader2, Clock } from "lucide-react";
+import {
+  isBrowserDemoRequestId,
+  updateBrowserDemoRequest,
+} from "@/lib/browser-demo-store";
 
 interface ContractorQuoteProps {
   requestId: string;
@@ -51,6 +55,21 @@ export default function ContractorQuote({
     setIsSubmitting(true);
     setActionError(null);
     try {
+      if (isBrowserDemoRequestId(requestId)) {
+        const updated = updateBrowserDemoRequest(requestId, {
+          landlord_approved: true,
+          status: "dispatched",
+        });
+
+        if (!updated) {
+          throw new Error("Demo request could not be updated.");
+        }
+
+        setLocalStatus("accepted");
+        onRequestUpdated?.(updated as Record<string, unknown>);
+        return;
+      }
+
       const response = await fetch(`/api/requests/${requestId}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
@@ -84,6 +103,20 @@ export default function ContractorQuote({
     setIsSubmitting(true);
     setActionError(null);
     try {
+      if (isBrowserDemoRequestId(requestId)) {
+        const updated = updateBrowserDemoRequest(requestId, {
+          diagnosis_patch: { quote_status: "declined" },
+        });
+
+        if (!updated) {
+          throw new Error("Demo request could not be updated.");
+        }
+
+        setLocalStatus("declined");
+        onRequestUpdated?.(updated as Record<string, unknown>);
+        return;
+      }
+
       const response = await fetch(`/api/requests/${requestId}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
