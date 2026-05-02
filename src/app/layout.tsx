@@ -1,5 +1,6 @@
 import { getUserRole } from "@/lib/auth";
-import { ClerkProvider, SignInButton, SignUpButton, Show, UserButton } from "@clerk/nextjs";
+import { AppClerkProvider } from "@/components/AppClerkProvider";
+import { SignInButton, SignUpButton, Show, UserButton } from "@clerk/nextjs";
 import type { Metadata } from "next";
 import { Manrope, Syncopate } from "next/font/google";
 import "./globals.css";
@@ -27,11 +28,12 @@ export default async function RootLayout({
 }>) {
   // Try to pre-fetch the role so layout can adapt if needed
   const role = await getUserRole().catch(() => null);
+  const clerkPublishableKey = process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY;
 
   return (
     <html lang="en">
       <body className={`${manrope.variable} ${syncopate.variable} font-sans h-full antialiased min-h-full flex flex-col bg-background text-foreground`}>
-        <ClerkProvider>
+        <AppClerkProvider publishableKey={clerkPublishableKey}>
           <header className="flex justify-between items-center p-4 border-b-2 border-navy border-opacity-30 bg-white">
             <h1 className="text-2xl font-bold font-display uppercase tracking-widest text-[#0A1428]">Fix<span className="text-[#FF4500]">Flow</span></h1>
             <div>
@@ -56,7 +58,7 @@ export default async function RootLayout({
           <main className="flex-1 p-4 md:p-8">
             {children}
           </main>
-        </ClerkProvider>
+        </AppClerkProvider>
       </body>
     </html>
   );
